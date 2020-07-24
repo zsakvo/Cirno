@@ -12,6 +12,21 @@
           </a-input>
         </div>
       </div>
+      <div class="right-container">
+        <div class="menu-container">
+          <a-menu v-model="currentMenu" mode="horizontal">
+            <a-menu-item key="shelf">
+              <div class="item-content">书架</div>
+            </a-menu-item>
+            <a-menu-item key="rss">
+              <div class="item-content">RSS</div>
+            </a-menu-item>
+            <a-menu-item key="about">
+              <div class="item-content">关于</div>
+            </a-menu-item>
+          </a-menu>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -27,7 +42,8 @@ export default {
   },
   data() {
     return {
-      searchStr: ''
+      searchStr: '',
+      currentMenu: ['shelf']
     }
   }
 }
@@ -74,6 +90,22 @@ export default {
         width: 330px;
         &:focus {
           box-shadow: none;
+        }
+      }
+    }
+    .right-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 40px;
+      .menu-container {
+        transform: rotateX(180deg);
+        &::v-deep .ant-menu {
+          border-bottom: none;
+          .item-content {
+            transform: rotateX(180deg);
+          }
         }
       }
     }
