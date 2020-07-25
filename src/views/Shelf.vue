@@ -44,7 +44,13 @@
           </a-sub-menu>
         </a-menu>
       </div>
-      <div class="content-container"></div>
+      <div class="content-container">
+        <div v-show="loadingBooks === 0">
+          <div class="skeleton-container">
+            <a-skeleton active />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -64,7 +70,8 @@ export default {
       currentTopMenu: ['shelf'],
       sideOpenKeys: ['hbooker'],
       currentSideItemSelected: [],
-      hbooker_shelves: []
+      hbooker_shelves: [],
+      loadingBooks: 0
     }
   },
   async created() {
@@ -72,17 +79,22 @@ export default {
       url: '/bookshelves'
     })
     this.hbooker_shelves = hbooker_shelves.data.shelf_list
+    this.currentSideItemSelected = [this.hbooker_shelves[0].shelf_id]
+    let book_list = await this.$get({
+      url: '/shelf_books',
+      urlParas: {
+        shelf_id: this.currentSideItemSelected[0]
+      }
+    })
+    console.log(book_list.data.book_list)
   },
-  watch: {
-    hbooker_shelves(newValue) {
-      this.currentSideItemSelected = [newValue[0].shelf_id]
-    }
-  }
+  watch: {}
 }
 </script>
 
 <style lang="less" scoped>
 .home {
+  height: 100vh;
   .header {
     background: #fff;
     box-shadow: 0 2px 8px #f0f1f2;
@@ -144,6 +156,7 @@ export default {
   .page {
     width: 100%;
     max-height: 100vh;
+    height: calc(~'100vh - 64px');
     display: flex;
     .nav-container {
       user-select: none;
@@ -161,6 +174,10 @@ export default {
           }
         }
       }
+    }
+    .content-container {
+      flex: 1;
+      padding: 18px 40px;
     }
   }
 }

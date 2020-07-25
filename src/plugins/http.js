@@ -93,11 +93,7 @@ function get(obj) {
           if (data.success) {
             resolve(data)
           } else {
-            vm.prototype.$Toast.show({
-              type: 'danger',
-              // action: 'refresh',
-              text: data.tip
-            })
+            vm.prototype.$message.error(data.tip)
             reject(data)
           }
         } else {
@@ -106,11 +102,7 @@ function get(obj) {
       })
       .catch(err => {
         //请求出错了……
-        vm.prototype.$Toast.show({
-          type: 'danger',
-          // action: 'refresh',
-          text: err.message
-        })
+        vm.prototype.$message.error(err.message)
         reject(err)
       })
   })
