@@ -14,12 +14,15 @@
       </div>
       <div class="right-container">
         <div class="menu-container">
-          <a-menu v-model="currentMenu" mode="horizontal">
+          <a-menu v-model="currentTopMenu" mode="horizontal">
             <a-menu-item key="shelf">
               <div class="item-content">书架</div>
             </a-menu-item>
             <a-menu-item key="rss">
               <div class="item-content">RSS</div>
+            </a-menu-item>
+            <a-menu-item key=" settings">
+              <div class="item-content">设置</div>
             </a-menu-item>
             <a-menu-item key="about">
               <div class="item-content">关于</div>
@@ -27,6 +30,21 @@
           </a-menu>
         </div>
       </div>
+    </div>
+    <div class="page">
+      <div class="nav-container">
+        <a-menu v-model="currentSideItemSelected" :open-keys="sideOpenKeys" mode="inline">
+          <a-sub-menu key="hbooker">
+            <span slot="title">
+              <span>刺猬猫</span>
+            </span>
+            <a-menu-item v-for="shelf in hbooker_shelves" :key="shelf.shelf_id">
+              {{ shelf.shelf_name }}
+            </a-menu-item>
+          </a-sub-menu>
+        </a-menu>
+      </div>
+      <div class="content-container"></div>
     </div>
   </div>
 </template>
@@ -43,7 +61,21 @@ export default {
   data() {
     return {
       searchStr: '',
-      currentMenu: ['shelf']
+      currentTopMenu: ['shelf'],
+      sideOpenKeys: ['hbooker'],
+      currentSideItemSelected: [],
+      hbooker_shelves: []
+    }
+  },
+  async created() {
+    let hbooker_shelves = await this.$get({
+      url: '/bookshelves'
+    })
+    this.hbooker_shelves = hbooker_shelves.data.shelf_list
+  },
+  watch: {
+    hbooker_shelves(newValue) {
+      this.currentSideItemSelected = [newValue[0].shelf_id]
     }
   }
 }
@@ -100,11 +132,32 @@ export default {
       justify-content: flex-end;
       padding-right: 40px;
       .menu-container {
-        transform: rotateX(180deg);
         &::v-deep .ant-menu {
           border-bottom: none;
+          .ant-menu-item {
+            border-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+  .page {
+    width: 100%;
+    max-height: 100vh;
+    display: flex;
+    .nav-container {
+      user-select: none;
+      margin-top: 18px;
+      width: 263px;
+      &::v-deep .ant-menu {
+        border-right: none;
+        .ant-menu-item {
+          border-radius: 0 25px 25px 0;
+          &::after {
+            border-right: none;
+          }
           .item-content {
-            transform: rotateX(180deg);
+            margin-left: 16px;
           }
         }
       }
