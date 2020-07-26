@@ -24,7 +24,7 @@
         </div>
         <div v-show="tsukkomi_list.length !== 0">
           <div class="title-container">
-            <div class="title-text">共 {{ tsukkomi_num }} 条帖子</div>
+            <div class="title-text" @click="toTsukkomiTop">共 {{ tsukkomi_num }} 条帖子</div>
             <div class="title-button" @click="closeTsu"><i class="ri-close-line"></i></div>
           </div>
           <div class="tsukkomis" ref="tsukkomi">
@@ -356,6 +356,7 @@ export default {
         padding-bottom: 14px;
         .title-text {
           font-size: 12px;
+          cursor: pointer;
         }
         .title-button {
           font-size: 14px;
