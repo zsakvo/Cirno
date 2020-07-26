@@ -155,10 +155,11 @@ export default {
     nextChapter() {
       this.loading = 0
       this.toTop()
+      this.containerScroll.destroy()
       this.chapterIndex++
       let cid = this.book_chapterids[this.chapterIndex]
       this.getContent(cid)
-      this.$router.push({ query: { bid: this.bid, cid: cid } })
+      this.$router.replace({ query: { bid: this.bid, cid: cid } })
     }
   }
 }
