@@ -1,7 +1,7 @@
 <template>
-  <div class="book-page" ref="book">
-    <div class="content-container" ref="content">
-      <div v-show="loading === 1" class="book-content">
+  <div class="book-page" ref="book" :class="{ 'book-page-tsu': showTsukkomi }">
+    <div class="content-container" ref="contentContainer">
+      <div v-show="loading === 1" class="book-content" ref="bookContent">
         <div class="top-bar">
           <i class="ri-bookmark-fill icon-button"></i>
           <div class="topbar-title">{{ chapterTitle }}</div>
@@ -18,6 +18,49 @@
           <div class="next-chapter-button" @click="nextChapter">下一章</div>
         </div>
       </div>
+      <div v-show="loading === 1 && showTsukkomi" class="tsukkomi-container" :style="{ right: tsukkomiRight + 'px' }">
+        <div v-show="tsukkomi_list.length === 0" class="skeleton-container">
+          <a-skeleton active />
+        </div>
+        <div v-show="tsukkomi_list.length !== 0">
+          <div class="title-container">
+            <div class="title-text">共 {{ tsukkomi_num }} 条帖子</div>
+            <div class="title-button" @click="closeTsu"><i class="ri-close-line"></i></div>
+          </div>
+          <div class="tsukkomis" ref="tsukkomi">
+            <div class="tsukkomi" v-for="tsukkomi in tsukkomi_list" :key="tsukkomi.tsukkomi_id">
+              <div class="tsukkomi-info">
+                <div class="avatar">
+                  <img
+                    :src="
+                      tsukkomi.reader_info.avatar_thumb_url.length !== 0
+                        ? tsukkomi.reader_info.avatar_thumb_url
+                        : tempAvatar
+                    "
+                  />
+                </div>
+                <div class="tsukkomi-info-text">
+                  <div class="user-name">{{ tsukkomi.reader_info.reader_name }}</div>
+                  <div class="time">{{ tsukkomi.ctime }}</div>
+                </div>
+              </div>
+              <div class="tsukkomi-content">
+                {{ tsukkomi.tsukkomi_content }}
+              </div>
+              <div class="tsukkomi-options">
+                <div class="option-button">
+                  <i class="ri-thumb-up-line"></i>
+                  <div class="num">{{ tsukkomi.like_amount }}</div>
+                </div>
+                <div class="option-button">
+                  <i class="ri-thumb-down-line"></i>
+                  <div class="num">{{ tsukkomi.unlike_amount }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div v-show="loading === 0" class="skeleton-container">
         <a-skeleton active />
       </div>
@@ -26,7 +69,7 @@
       <div class="control-button-container">
         <i class="ri-menu-line control-button"></i>
       </div>
-      <div class="control-button-container">
+      <div class="control-button-container" @click="showTsu">
         <i class="ri-font-size-2 control-button"></i>
       </div>
       <div class="control-button-container">
@@ -54,6 +97,7 @@ export default {
     return {
       bid: null,
       cid: null,
+      contentDiv: null,
       contentWidth: 0,
       controlBarLeftMargin: 0,
       loading: 0,
@@ -64,7 +108,12 @@ export default {
       chapterIndex: 0,
       chapter_info: {},
       chapterContentData: [],
-      containerScroll: null
+      containerScroll: null,
+      tsukkomi_num: 0,
+      tsukkomi_list: [],
+      showTsukkomi: false,
+      tsukkomiRight: 0,
+      tempAvatar: require('@/assets/d_avatar.jpg')
     }
   },
   async created() {
@@ -90,6 +139,7 @@ export default {
     this.getContent(this.cid)
   },
   mounted() {
+    this.contentDiv = this.$refs.contentContainer
     window.addEventListener('resize', this.windowSizeHandler)
   },
   watch: {
@@ -99,8 +149,11 @@ export default {
   },
   methods: {
     windowSizeHandler() {
-      let contentWidth = this.$refs.content.clientWidth
+      console.log(233)
+      let windowWidth = window.innerWidth
+      let contentWidth = this.contentDiv.clientWidth
       this.controlBarLeftMargin = -(contentWidth / 2 + 96)
+      this.tsukkomiRight = (windowWidth - contentWidth) / 2
     },
     async getContent(cid) {
       typeof cid === 'string' ? null : (cid = `${cid}`)
@@ -148,10 +201,40 @@ export default {
       })
       return tsukkomi_num_info.data.tsukkomi_num_info
     },
+    async getTsukkomiList(paragraph_index) {
+      let tsukkomi_list = await this.$get({
+        url: '/tsukkomi_list',
+        urlParas: {
+          chapter_id: this.cid,
+          paragraph_index: paragraph_index
+        }
+      })
+      this.tsukkomi_list = tsukkomi_list.data.tsukkomi_list
+      console.log(this.tsukkomi_list)
+      this.$nextTick(() => {
+        this.tsukkomiScroll = new PerfectScrollbar(this.$refs.tsukkomi, {
+          wheelSpeed: 2,
+          wheelPropagation: false,
+          minScrollbarLength: 20
+        })
+      })
+    },
     toTop() {
       this.$refs.book.scrollTo(0, 0)
     },
-    showTsu() {},
+    showTsu(index, num) {
+      this.tsukkomi_list = []
+      this.tsukkomi_num = num
+      this.showTsukkomi = true
+      this.$refs.tsukkomi.scrollTo(0, 0)
+      this.getTsukkomiList(index)
+      this.$nextTick(() => {
+        this.windowSizeHandler()
+      })
+    },
+    closeTsu() {
+      this.showTsukkomi = false
+    },
     nextChapter() {
       this.loading = 0
       this.toTop()
@@ -189,7 +272,7 @@ export default {
       .top-bar {
         position: fixed;
         top: 0;
-        z-index: 10;
+        z-index: 20;
         height: 73px;
         width: @contentWidth;
         max-width: 760px;
@@ -233,6 +316,91 @@ export default {
         }
       }
     }
+    .tsukkomi-container {
+      width: 400px;
+      height: 100vh;
+      position: fixed;
+      padding-top: 90px;
+      border-left: 1px solid #e0e0e0;
+      top: 0;
+      z-index: 16;
+      background: rgb(255, 255, 255);
+      .title-container {
+        color: #a6a6a6;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #e0e0e0;
+        margin: 0 16px 0 16px;
+        align-items: center;
+        padding-bottom: 14px;
+        .title-text {
+          font-size: 12px;
+        }
+        .title-button {
+          font-size: 14px;
+          cursor: pointer;
+        }
+      }
+      .tsukkomis {
+        padding: 0 16px;
+        height: calc(~'100vh - 128px');
+        position: relative;
+        overflow: hidden;
+        .tsukkomi {
+          display: flex;
+          flex-direction: column;
+          padding: 16px 0;
+          border-bottom: 1px solid #e0e0e0;
+          .tsukkomi-info {
+            display: flex;
+            align-items: center;
+            .avatar {
+              img {
+                width: 45px;
+                border-radius: 50%;
+              }
+            }
+            .tsukkomi-info-text {
+              margin-left: 16px;
+              .user-name {
+                font-size: 13px;
+                font-weight: 700;
+                line-height: 13px;
+                display: block;
+                margin-bottom: 8px;
+                color: #333;
+              }
+              .time {
+                font-size: 13px;
+                color: #a6a6a6;
+              }
+            }
+          }
+          .tsukkomi-content {
+            font-size: 14px;
+            line-height: 22px;
+            color: #262626;
+            padding: 10px 0;
+          }
+          .tsukkomi-options {
+            font-size: 14px;
+            color: #a6a6a6;
+            display: flex;
+            justify-content: flex-end;
+            .option-button {
+              display: flex;
+              align-items: center;
+              margin-right: 18px;
+              cursor: pointer;
+            }
+            &::v-deep .num {
+              padding-left: 6px;
+              font-size: 13px;
+            }
+          }
+        }
+      }
+    }
   }
   .control-bar-container {
     width: 48px;
@@ -260,6 +428,17 @@ export default {
         .control-button {
           opacity: 1;
         }
+      }
+    }
+  }
+}
+.book-page-tsu {
+  .content-container {
+    max-width: 1160px;
+    .book-content {
+      max-width: 760px;
+      .top-bar {
+        max-width: 1160px;
       }
     }
   }
