@@ -97,7 +97,7 @@
       :currentChapter="chapterIndex"
       :marginLeft="tsukkomiRight"
       :chapters="book_chapters"
-      @getContent="getContent"
+      @getContent="jumpChapter"
       ref="catalog"
     ></catalog>
   </div>
@@ -279,6 +279,15 @@ export default {
       } else {
         this.$message.error('已经是最后一章了')
       }
+    },
+    jumpChapter(cid) {
+      this.showTsukkomi = false
+      this.loading = 0
+      this.toChapterTop()
+      this.toTsukkomiTop()
+      this.containerScroll.destroy()
+      this.getContent(cid)
+      this.$router.replace({ query: { bid: this.bid, cid: cid } })
     },
     changeTsukkomiPage(page) {
       this.showTsu(this.tsukkomiIndex, null, page)
