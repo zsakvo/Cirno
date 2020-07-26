@@ -32,22 +32,34 @@
       </div>
     </div>
     <div class="page">
-      <div class="nav-container">
-        <a-menu v-model="currentSideItemSelected" :open-keys="sideOpenKeys" mode="inline">
-          <a-sub-menu key="hbooker">
-            <span slot="title">
-              <span>刺猬猫</span>
-            </span>
-            <a-menu-item v-for="shelf in hbooker_shelves" :key="shelf.shelf_id">
-              {{ shelf.shelf_name }}
-            </a-menu-item>
-          </a-sub-menu>
-        </a-menu>
-      </div>
+      <a-affix :offset-top="0">
+        <div class="nav-container">
+          <a-menu v-model="currentSideItemSelected" :open-keys="sideOpenKeys" mode="inline">
+            <a-sub-menu key="hbooker">
+              <span slot="title">
+                <span>刺猬猫</span>
+              </span>
+              <a-menu-item
+                v-for="shelf in hbooker_shelves"
+                :key="shelf.shelf_id"
+                @click="clickShelfItem(shelf.shelf_id)"
+              >
+                {{ shelf.shelf_name }}
+              </a-menu-item>
+            </a-sub-menu>
+          </a-menu>
+        </div>
+      </a-affix>
       <div class="content-container">
-        <div v-show="loadingBooks === 0">
-          <div class="skeleton-container">
-            <a-skeleton active />
+        <div v-show="loadingBooks === 0" class="skeleton-container">
+          <a-skeleton active />
+        </div>
+        <div class="books-container" v-show="loadingBooks === 1" ref="booksContainer">
+          <div class="books">
+            <div class="book" v-for="book in book_list" :key="book.id" @click="gotoBook(book)">
+              <div class="book-cover"><img :src="book.book_info.cover" alt="" /></div>
+              <div class="book-name">{{ book.book_info.book_name }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -58,6 +70,8 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+import PerfectScrollbar from 'perfect-scrollbar'
+import 'perfect-scrollbar/css/perfect-scrollbar.css'
 
 export default {
   name: 'Home',
@@ -71,7 +85,9 @@ export default {
       sideOpenKeys: ['hbooker'],
       currentSideItemSelected: [],
       hbooker_shelves: [],
-      loadingBooks: 0
+      loadingBooks: 0,
+      book_list: [],
+      shelfScroll: null
     }
   },
   async created() {
@@ -86,9 +102,24 @@ export default {
         shelf_id: this.currentSideItemSelected[0]
       }
     })
-    console.log(book_list.data.book_list)
+    this.book_list = book_list.data.book_list
+    this.loadingBooks = 1
+    this.$nextTick(() => {
+      this.shelfScroll = new PerfectScrollbar(this.$refs.booksContainer, {
+        wheelSpeed: 2,
+        wheelPropagation: true,
+        minScrollbarLength: 20
+      })
+    })
   },
-  watch: {}
+  watch: {},
+  methods: {
+    clickShelfItem(id) {
+      if (id === this.currentSideItemSelected[0]) {
+        this.$refs.booksContainer.scrollTo(0, 0)
+      }
+    }
+  }
 }
 </script>
 
@@ -177,7 +208,53 @@ export default {
     }
     .content-container {
       flex: 1;
-      padding: 18px 40px;
+      .skeleton-container {
+        padding: 32px 40px;
+      }
+      .books-container {
+        padding: 32px 40px;
+        max-height: 100%;
+        overflow: hidden;
+        position: relative;
+        .books {
+          grid-row-gap: 40px;
+          grid-column-gap: 32px;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, 108px);
+          justify-content: space-between;
+          .book {
+            width: 108px;
+            cursor: pointer;
+            .book-cover {
+              width: 108px;
+              height: 156px;
+              img {
+                width: 100%;
+                height: 100%;
+              }
+            }
+
+            .book-name {
+              font-size: 13px;
+              margin-top: 16px;
+              color: #6d6d6d;
+              line-height: 18px;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              user-select: none;
+            }
+
+            &:hover {
+              .book-name {
+                color: #333333;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
