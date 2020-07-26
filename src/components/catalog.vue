@@ -1,6 +1,15 @@
 <template>
   <div class="catalog-container">
-    <zi-dialog v-model="visible" class="catalog-dialog-container">
+    <a-modal
+      v-model="visible"
+      class="catalog-dialog-container"
+      :closable="false"
+      :footer="null"
+      dialogClass="cata-dialog"
+      :dialogStyle="{
+        'margin-left': marginLeft + 'px'
+      }"
+    >
       <div class="header-wrapper">
         <div class="catalog-head">
           <div class="book-cover" :style="getCover"></div>
@@ -28,7 +37,7 @@
           </div>
         </div>
       </div>
-    </zi-dialog>
+    </a-modal>
   </div>
 </template>
 
@@ -57,6 +66,10 @@ export default {
     reverse: {
       type: Boolean,
       default: false
+    },
+    marginLeft: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -70,12 +83,10 @@ export default {
       return `background: url(${this.info.cover}) no-repeat;background-size: cover;`
     }
   },
-  created() {
-    // console.log(this.currentChapter)
-  },
+  created() {},
   watch: {
-    chapters(newValue) {
-      // console.log(newValue)
+    marginLeft(newValue) {
+      this.$forceUpdate()
     },
     currentChapter(newValue) {
       this.$forceUpdate()
@@ -106,100 +117,94 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.catalog-container {
-  .catalog-dialog-container {
-    &::v-deep .zi-dialog-footer {
-      display: none;
+::v-deep .ant-modal {
+  position: unset;
+  padding-bottom: 0;
+  .ant-modal-content {
+    width: 520px;
+    height: 100%;
+    // transform: translateX(-120px);
+    .ant-modal-body {
+      padding: 0;
     }
-    &::v-deep .zi-dialog-wrapper {
-      width: 520px;
-      height: 100%;
-      transform: translateX(-120px);
-    }
-    &::v-deep .zi-dialog-content {
-      padding: 0 0 0 0;
-      height: 100%;
-      .body {
-        height: 100%;
-        max-height: unset;
-        overflow: hidden;
-      }
-    }
-    .header-wrapper {
-      padding-top: 36px;
-      background: #fafafb;
-      .catalog-head {
-        padding: 0 36px;
-        display: flex;
-        .book-cover {
-          width: 64px;
-          height: 92px;
-          margin-right: 20px;
-        }
-        .book-info {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          font-family: 'Noto Sans SC', serif, PingFang SC, -apple-system, SF UI Text, Lucida Grande, STheiti,
-            Microsoft YaHei, sans-serif;
-          .book-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #212832;
-          }
-          .book-author {
-            color: #5d646e;
-            margin-top: 7px;
-            font-size: 14px;
-            font-weight: 600;
-          }
-          .read-speed {
-            color: #858c96;
-            margin-top: 6px;
-            font-size: 14px;
-            font-weight: 600;
-          }
-        }
-      }
-    }
-    .catalog-button-container {
-      height: 40px;
+  }
+}
+.cata-dialog {
+  .header-wrapper {
+    padding-top: 36px;
+    .catalog-head {
       padding: 0 36px;
       display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      .catalog-button {
-        font-size: 18px;
-        opacity: 0.5;
-        cursor: pointer;
+      .book-cover {
+        width: 64px;
+        height: 92px;
+        margin-right: 20px;
+      }
+      .book-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-family: 'Noto Sans SC', serif, PingFang SC, -apple-system, SF UI Text, Lucida Grande, STheiti,
+          Microsoft YaHei, sans-serif;
+        .book-name {
+          font-size: 18px;
+          font-weight: 600;
+          color: #212832;
+        }
+        .book-author {
+          color: #5d646e;
+          margin-top: 7px;
+          font-size: 14px;
+          font-weight: 600;
+        }
+        .read-speed {
+          color: #858c96;
+          margin-top: 6px;
+          font-size: 14px;
+          font-weight: 600;
+        }
       }
     }
-    .scroll-wrapper {
-      height: calc(~'100vh - 168px');
-      overflow: hidden;
-      position: relative;
-      .catalog-content {
-        height: fit-content;
-        .catalog {
-          height: 52px;
-          line-height: 52px;
-          padding-left: 36px;
-          padding-right: 36px;
-          .chaper-title {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            border-top: 1px solid rgb(238, 240, 244);
-            color: #353c46;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            word-break: break-all;
-            font-size: 15px;
-          }
-          .chapter-title-selected {
-            color: #1b88ee;
-          }
+  }
+  .catalog-button-container {
+    height: 40px;
+    margin-bottom: 8px;
+    padding: 0 36px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .catalog-button {
+      font-size: 18px;
+      opacity: 0.5;
+      cursor: pointer;
+    }
+  }
+  .scroll-wrapper {
+    height: calc(~'100vh - 176px');
+    overflow: hidden;
+    position: relative;
+    .catalog-content {
+      height: fit-content;
+      padding-bottom: 12px;
+      .catalog {
+        height: 52px;
+        line-height: 52px;
+        padding-left: 36px;
+        padding-right: 36px;
+        .chaper-title {
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          border-top: 1px solid rgb(238, 240, 244);
+          color: #353c46;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          word-break: break-all;
+          font-size: 15px;
+        }
+        .chapter-title-selected {
+          color: #1b88ee;
         }
       }
     }

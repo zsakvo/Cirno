@@ -76,7 +76,7 @@
       </div>
     </div>
     <div v-show="loading === 1" class="control-bar-container" :style="{ 'margin-left': controlBarLeftMargin + 'px' }">
-      <div class="control-button-container">
+      <div class="control-button-container" @click="showCatalog">
         <i class="ri-menu-line control-button"></i>
       </div>
       <div class="control-button-container" @click="showTsu">
@@ -92,6 +92,14 @@
         <i class="ri-arrow-up-s-line control-button"></i>
       </div>
     </div>
+    <catalog
+      :info="book_info"
+      :currentChapter="chapterIndex"
+      :marginLeft="tsukkomiRight"
+      :chapters="book_chapters"
+      @getContent="getContent"
+      ref="catalog"
+    ></catalog>
   </div>
 </template>
 
@@ -99,9 +107,11 @@
 import PerfectScrollbar from 'perfect-scrollbar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import Paragraph from '../components/paragraph.vue'
+import Catalog from '../components/catalog.vue'
 export default {
   components: {
-    Paragraph
+    Paragraph,
+    Catalog
   },
   data() {
     return {
@@ -126,7 +136,8 @@ export default {
       tsukkomiPage: 1,
       tsukkomiScroll: null,
       tsukkomiIndex: 0,
-      tempAvatar: require('@/assets/d_avatar.jpg')
+      tempAvatar: require('@/assets/d_avatar.jpg'),
+      cataMarginLeft: 0
     }
   },
   async created() {
@@ -238,7 +249,7 @@ export default {
     showTsu(index, num, page) {
       this.tsukkomiIndex = index
       num ? (this.tsukkomi_num = parseInt(num)) : null
-      page ? (this.tsukkomiPage = page) : 0
+      page ? (this.tsukkomiPage = page) : (this.tsukkomiPage = 1)
       this.tsukkomi_list = []
       this.tsukkomiScroll ? this.tsukkomiScroll.destroy() : null
       this.showTsukkomi = true
@@ -255,18 +266,25 @@ export default {
       })
     },
     nextChapter() {
-      this.showTsukkomi = false
-      this.loading = 0
-      this.toChapterTop()
-      this.toTsukkomiTop()
-      this.containerScroll.destroy()
-      this.chapterIndex++
-      let cid = this.book_chapterids[this.chapterIndex]
-      this.getContent(cid)
-      this.$router.replace({ query: { bid: this.bid, cid: cid } })
+      if (this.chapterIndex < this.book_chapters.length - 1) {
+        this.showTsukkomi = false
+        this.loading = 0
+        this.toChapterTop()
+        this.toTsukkomiTop()
+        this.containerScroll.destroy()
+        this.chapterIndex++
+        let cid = this.book_chapterids[this.chapterIndex]
+        this.getContent(cid)
+        this.$router.replace({ query: { bid: this.bid, cid: cid } })
+      } else {
+        this.$message.error('已经是最后一章了')
+      }
     },
     changeTsukkomiPage(page) {
       this.showTsu(this.tsukkomiIndex, null, page)
+    },
+    showCatalog() {
+      this.$refs.catalog.showCatalog()
     }
   }
 }
