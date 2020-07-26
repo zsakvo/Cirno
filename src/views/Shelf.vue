@@ -118,6 +118,15 @@ export default {
       if (id === this.currentSideItemSelected[0]) {
         this.$refs.booksContainer.scrollTo(0, 0)
       }
+    },
+    gotoBook(book) {
+      this.$router.push({
+        name: 'Book',
+        query: {
+          bid: book.book_info.book_id,
+          cid: book.last_read_chapter_id
+        }
+      })
     }
   }
 }
