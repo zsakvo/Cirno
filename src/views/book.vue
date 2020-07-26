@@ -58,6 +58,16 @@
                 </div>
               </div>
             </div>
+            <div class="pagination-container">
+              <a-pagination
+                size="small"
+                @change="changeTsukkomiPage"
+                v-model="tsukkomiPage"
+                :total="tsukkomi_num"
+                :defaultPageSize="20"
+                :hideOnSinglePage="true"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -78,7 +88,7 @@
       <div class="control-button-container">
         <i class="ri-moon-line control-button"></i>
       </div>
-      <div class="control-button-container" @click="toTop">
+      <div class="control-button-container" @click="toChapterTop">
         <i class="ri-arrow-up-s-line control-button"></i>
       </div>
     </div>
@@ -113,6 +123,9 @@ export default {
       tsukkomi_list: [],
       showTsukkomi: false,
       tsukkomiRight: 0,
+      tsukkomiPage: 1,
+      tsukkomiScroll: null,
+      tsukkomiIndex: 0,
       tempAvatar: require('@/assets/d_avatar.jpg')
     }
   },
@@ -143,13 +156,10 @@ export default {
     window.addEventListener('resize', this.windowSizeHandler)
   },
   watch: {
-    contentWidth(newValue) {
-      console.log(newValue)
-    }
+    contentWidth(newValue) {}
   },
   methods: {
     windowSizeHandler() {
-      console.log(233)
       let windowWidth = window.innerWidth
       let contentWidth = this.contentDiv.clientWidth
       this.controlBarLeftMargin = -(contentWidth / 2 + 96)
@@ -206,27 +216,33 @@ export default {
         url: '/tsukkomi_list',
         urlParas: {
           chapter_id: this.cid,
-          paragraph_index: paragraph_index
+          paragraph_index: paragraph_index,
+          page: this.tsukkomiPage - 1
         }
       })
       this.tsukkomi_list = tsukkomi_list.data.tsukkomi_list
-      console.log(this.tsukkomi_list)
       this.$nextTick(() => {
         this.tsukkomiScroll = new PerfectScrollbar(this.$refs.tsukkomi, {
-          wheelSpeed: 2,
+          wheelSpeed: 1,
           wheelPropagation: false,
           minScrollbarLength: 20
         })
       })
     },
-    toTop() {
+    toChapterTop() {
       this.$refs.book.scrollTo(0, 0)
     },
-    showTsu(index, num) {
-      this.tsukkomi_list = []
-      this.tsukkomi_num = num
-      this.showTsukkomi = true
+    toTsukkomiTop() {
       this.$refs.tsukkomi.scrollTo(0, 0)
+    },
+    showTsu(index, num, page) {
+      this.tsukkomiIndex = index
+      num ? (this.tsukkomi_num = parseInt(num)) : null
+      page ? (this.tsukkomiPage = page) : 0
+      this.tsukkomi_list = []
+      this.tsukkomiScroll ? this.tsukkomiScroll.destroy() : null
+      this.showTsukkomi = true
+      this.toTsukkomiTop()
       this.getTsukkomiList(index)
       this.$nextTick(() => {
         this.windowSizeHandler()
@@ -236,13 +252,18 @@ export default {
       this.showTsukkomi = false
     },
     nextChapter() {
+      this.showTsukkomi = false
       this.loading = 0
-      this.toTop()
+      this.toChapterTop()
+      this.toTsukkomiTop()
       this.containerScroll.destroy()
       this.chapterIndex++
       let cid = this.book_chapterids[this.chapterIndex]
       this.getContent(cid)
       this.$router.replace({ query: { bid: this.bid, cid: cid } })
+    },
+    changeTsukkomiPage(page) {
+      this.showTsu(this.tsukkomiIndex, null, page)
     }
   }
 }
@@ -398,6 +419,15 @@ export default {
               font-size: 13px;
             }
           }
+        }
+      }
+      .pagination-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 18px 0;
+        &::v-deep .ant-pagination-item {
+          border: none;
         }
       }
     }

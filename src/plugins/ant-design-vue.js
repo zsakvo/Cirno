@@ -8,4 +8,5 @@ Vue.use(Menu)
 Vue.use(message)
 Vue.use(Skeleton)
 Vue.use(Affix)
+Vue.use(Pagination)
 Vue.prototype.$message = message
