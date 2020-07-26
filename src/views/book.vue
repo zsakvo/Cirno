@@ -14,6 +14,9 @@
           :isDark="false"
           :size="16"
         ></paragraph>
+        <div class="book-footer">
+          <div class="next-chapter-button" @click="nextChapter">下一章</div>
+        </div>
       </div>
       <div v-show="loading === 0" class="skeleton-container">
         <a-skeleton active />
@@ -58,6 +61,7 @@ export default {
       book_info: {},
       book_chapters: [],
       book_chapterids: [],
+      chapterIndex: 0,
       chapter_info: {},
       chapterContentData: [],
       containerScroll: null
@@ -102,6 +106,7 @@ export default {
       typeof cid === 'string' ? null : (cid = `${cid}`)
       this.cid = cid
       this.loading = 0
+      this.chapterIndex = this.book_chapterids.indexOf(cid)
       let chapter_info = await this.$get({
         url: '/chapter_content',
         urlParas: {
@@ -146,7 +151,15 @@ export default {
     toTop() {
       this.$refs.book.scrollTo(0, 0)
     },
-    showTsu() {}
+    showTsu() {},
+    nextChapter() {
+      this.loading = 0
+      this.toTop()
+      this.chapterIndex++
+      let cid = this.book_chapterids[this.chapterIndex]
+      this.getContent(cid)
+      this.$router.push({ query: { bid: this.bid, cid: cid } })
+    }
   }
 }
 </script>
@@ -198,6 +211,25 @@ export default {
       }
       .text-content {
         padding-top: 128px;
+      }
+      .book-footer {
+        height: 164px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        .next-chapter-button {
+          width: 400px;
+          background-color: #f6f7f9;
+          height: 60px;
+          line-height: 60px;
+          margin: 0 auto 24px;
+          border-radius: 6px;
+          text-align: center;
+          font-size: 16px;
+          font-weight: 500;
+          color: #1b88ee;
+          cursor: pointer;
+        }
       }
     }
   }

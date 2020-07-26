@@ -138,7 +138,7 @@ export default {
     margin: 0.8em auto;
   }
   .content-footer {
-    height: 84px;
+    height: 42px;
     width: 100%;
   }
 }
