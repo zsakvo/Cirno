@@ -250,6 +250,9 @@ export default {
     },
     closeTsu() {
       this.showTsukkomi = false
+      this.$nextTick(() => {
+        this.windowSizeHandler()
+      })
     },
     nextChapter() {
       this.showTsukkomi = false
