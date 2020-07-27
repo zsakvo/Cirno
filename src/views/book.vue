@@ -160,6 +160,10 @@ export default {
     this.book_chapterids = this.book_chapters.map(chapter => {
       return chapter['chapter_id']
     })
+    if (this.cid == 0) {
+      this.cid = this.book_chapterids[0]
+      this.$router.replace({ query: { bid: this.bid, cid: this.cid } })
+    }
     this.getContent(this.cid)
   },
   mounted() {
