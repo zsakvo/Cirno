@@ -199,7 +199,10 @@ export default {
       })
       let tsukkomi_nums = await this.getTsukkomiNum(cid)
       for (let tsukkomi_num of tsukkomi_nums) {
-        contentArray[tsukkomi_num['paragraph_index']].tsukkomi_num = tsukkomi_num.tsukkomi_num
+        let pIndex = tsukkomi_num['paragraph_index']
+        if (pIndex < contentArray.length) {
+          contentArray[tsukkomi_num['paragraph_index']].tsukkomi_num = tsukkomi_num.tsukkomi_num
+        }
       }
       this.chapterContentData = contentArray
       this.loading = 1
