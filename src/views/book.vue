@@ -15,7 +15,15 @@
           @showTsu="showTsu"
           @showPic="showPic"
         ></paragraph>
-        <div class="book-footer">
+        <div class="buy-container" v-show="!auth">
+          <div class="title">
+            本章是 VIP 章节，购买后才能阅读
+          </div>
+          <div class="subtitle">本章节需 {{ chapterAmount }} 币，共 {{ buyAmount }} 人购买</div>
+          <div class="buy-chapter-button" @click="buyChapter">购买本章</div>
+          <div class="auto-buy"><a-radio>遇到收费章节自动购买</a-radio></div>
+        </div>
+        <div class="book-footer" v-show="auth">
           <div class="next-chapter-button" @click="nextChapter">下一章</div>
         </div>
       </div>
@@ -162,7 +170,10 @@ export default {
       tsukkomiScroll: null,
       tsukkomiIndex: 0,
       tempAvatar: require('@/assets/d_avatar.jpg'),
-      cataMarginLeft: 0
+      cataMarginLeft: 0,
+      auth: true,
+      chapterAmount: 0,
+      buyAmount: 0
     }
   },
   async created() {
@@ -217,6 +228,9 @@ export default {
         }
       })
       this.chapter_info = chapter_info.data.chapter_info
+      this.chapter_info.auth_access === '1' ? (this.auth = true) : (this.auth = false)
+      this.chapterAmount = this.chapter_info.unit_hlb
+      this.buyAmount = this.chapter_info.buy_amount
       this.chapterTitle = this.chapter_info.chapter_title
       let txt_content = this.chapter_info.txt_content
       let contentArray = [this.chapterTitle, ...txt_content.split('\n')]
@@ -350,6 +364,16 @@ export default {
     },
     showPic(url) {
       this.$refs.picture.showPic(url)
+    },
+    async buyChapter() {
+      let buy = await this.$get({
+        url: '/chapter_buy',
+        urlParas: {
+          chapter_id: this.cid
+        }
+      })
+      console.log(buy)
+      this.getContent(this.cid)
     }
   }
 }
@@ -402,6 +426,38 @@ export default {
       }
       .text-content {
         padding-top: 128px;
+      }
+      .buy-container {
+        position: absolute;
+        bottom: 0;
+        width: @contentWidth;
+        max-width: 760px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 36px;
+        border-top: 1px solid #e8e8e8;
+        .title {
+          font-size: 24px;
+          padding: 36px 0 24px 0;
+        }
+        .subtitle {
+          padding-bottom: 24px;
+        }
+        .buy-chapter-button {
+          width: 400px;
+          background-color: #f6f7f9;
+          height: 60px;
+          line-height: 60px;
+          margin: 0 auto 24px;
+          border-radius: 6px;
+          text-align: center;
+          font-size: 16px;
+          font-weight: 500;
+          color: #1b88ee;
+          cursor: pointer;
+        }
       }
       .book-footer {
         height: 164px;
