@@ -9,10 +9,11 @@
         <paragraph
           class="text-content"
           ref="paragraph"
-          @showTsu="showTsu"
           :paragraphs="chapterContentData"
           :isDark="false"
           :size="16"
+          @showTsu="showTsu"
+          @showPic="showPic"
         ></paragraph>
         <div class="book-footer">
           <div class="next-chapter-button" @click="nextChapter">下一章</div>
@@ -343,6 +344,9 @@ export default {
     },
     newTsukkomi() {
       console.log('撰写新间贴')
+    },
+    showPic(url) {
+      console.log(url)
     }
   }
 }

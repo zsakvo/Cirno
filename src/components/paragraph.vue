@@ -1,8 +1,15 @@
 <script>
+let picParaReg = /^\s+?<img.+>$/
+let picAltReg = /(?<=alt=').+?(?=')/
+let picSrcReg = /(?<=src=").+?(?=")/
 export default {
   name: 'Paragraph',
   data() {
-    return {}
+    return {
+      picParaReg: picParaReg,
+      picAltReg: picAltReg,
+      picSrcReg: picSrcReg
+    }
   },
   created() {},
   props: [
@@ -35,7 +42,19 @@ export default {
             if (i !== 0) {
               return (
                 <p class="tssukomi-wrapper" style={{ 'font-size': +this.size + 'px' }}>
-                  <span class="content-text">{a.text}</span>
+                  {this.picParaReg.test(a.text) ? (
+                    <span
+                      class="content-text pic-alt"
+                      onClick={() => {
+                        this.$emit('showPic', a.text.match(this.picSrcReg)[0])
+                      }}
+                    >
+                      {'　　【' + a.text.match(this.picAltReg)[0] + '】'}
+                    </span>
+                  ) : (
+                    <span class="content-text">{a.text}</span>
+                  )}
+
                   {a.tsukkomi_num > 0 ? (
                     <span
                       class="tssukomi"
@@ -136,6 +155,10 @@ export default {
     word-break: break-all;
     padding: 0 72px;
     margin: 0.8em auto;
+    .pic-alt {
+      color: #1890ff;
+      cursor: pointer;
+    }
   }
   .content-footer {
     height: 42px;
