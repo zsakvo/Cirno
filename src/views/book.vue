@@ -274,14 +274,16 @@ export default {
     toTsukkomiTop() {
       this.$refs.tsukkomi.scrollTo(0, 0)
     },
-    showTsu(index, num, page) {
+    showTsu(index, num, page, noSkeleton) {
       this.tsukkomiIndex = index
       num ? (this.tsukkomi_num = parseInt(num)) : null
       page ? (this.tsukkomiPage = page) : (this.tsukkomiPage = 1)
-      this.tsukkomi_list = []
       this.tsukkomiScroll ? this.tsukkomiScroll.destroy() : null
-      this.showTsukkomi = true
-      this.toTsukkomiTop()
+      if (!noSkeleton) {
+        this.tsukkomi_list = []
+        this.showTsukkomi = true
+        this.toTsukkomiTop()
+      }
       this.getTsukkomiList(index)
       this.$nextTick(() => {
         this.windowSizeHandler()
@@ -336,7 +338,7 @@ export default {
           tsukkomi_id: tsukkomi_id
         }
       })
-      this.showTsu(this.tsukkomiIndex, this.tsukkomi_num, this.tsukkomiPage)
+      this.showTsu(this.tsukkomiIndex, this.tsukkomi_num, this.tsukkomiPage, true)
     },
     newTsukkomi() {
       console.log('撰写新间贴')
