@@ -291,6 +291,7 @@ export default {
     },
     closeTsu() {
       this.showTsukkomi = false
+      this.toTsukkomiTop()
       this.$nextTick(() => {
         this.windowSizeHandler()
       })
