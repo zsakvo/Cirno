@@ -122,6 +122,7 @@
       @getContent="jumpChapter"
       ref="catalog"
     ></catalog>
+    <Picture ref="picture" />
   </div>
 </template>
 
@@ -130,10 +131,12 @@ import PerfectScrollbar from 'perfect-scrollbar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import Paragraph from '../components/paragraph.vue'
 import Catalog from '../components/catalog.vue'
+import Picture from '../components/picture.vue'
 export default {
   components: {
     Paragraph,
-    Catalog
+    Catalog,
+    Picture
   },
   data() {
     return {
@@ -346,7 +349,7 @@ export default {
       console.log('撰写新间贴')
     },
     showPic(url) {
-      console.log(url)
+      this.$refs.picture.showPic(url)
     }
   }
 }
