@@ -48,11 +48,11 @@
                 {{ tsukkomi.tsukkomi_content }}
               </div>
               <div class="tsukkomi-options">
-                <div class="option-button">
+                <div class="option-button" :class="{ 'like-selected': tsukkomi.is_like }">
                   <i class="ri-thumb-up-line"></i>
                   <div class="num">{{ tsukkomi.like_amount }}</div>
                 </div>
-                <div class="option-button">
+                <div class="option-button" :class="{ 'unlike-selected': tsukkomi.is_unlike }">
                   <i class="ri-thumb-down-line"></i>
                   <div class="num">{{ tsukkomi.unlike_amount }}</div>
                 </div>
@@ -75,7 +75,11 @@
         <a-skeleton active />
       </div>
     </div>
-    <div v-show="loading === 1" class="control-bar-container" :style="{ 'margin-left': controlBarLeftMargin + 'px' }">
+    <div
+      v-show="loading === 1"
+      class="control-bar-container content-bar"
+      :style="{ 'margin-left': controlBarLeftMargin + 'px' }"
+    >
       <div class="control-button-container" @click="showCatalog">
         <i class="ri-menu-line control-button"></i>
       </div>
@@ -90,6 +94,15 @@
       </div>
       <div class="control-button-container" @click="toChapterTop">
         <i class="ri-arrow-up-s-line control-button"></i>
+      </div>
+    </div>
+    <div
+      class="control-bar-container tsukkomi-bar"
+      :class="{ 'tsukkomi-bar-show': showTsukkomi }"
+      :style="{ 'margin-right': controlBarLeftMargin + 'px' }"
+    >
+      <div class="control-button-container" @click="newTsukkomi">
+        <i class="ri-edit-circle-line control-button"></i>
       </div>
     </div>
     <catalog
@@ -186,7 +199,7 @@ export default {
       this.loading = 0
       this.chapterIndex = this.book_chapterids.indexOf(cid)
       let chapter_info = await this.$get({
-        url: '/chapter_content',
+        url: '/chapter_ifm',
         urlParas: {
           chapter_id: cid
         }
@@ -301,6 +314,9 @@ export default {
     },
     showCatalog() {
       this.$refs.catalog.showCatalog()
+    },
+    newTsukkomi() {
+      console.log('撰写新间贴')
     }
   }
 }
@@ -452,6 +468,12 @@ export default {
               margin-right: 18px;
               cursor: pointer;
             }
+            .like-selected {
+              color: #1890ff;
+            }
+            .unlike-selected {
+              color: #f5222d;
+            }
             &::v-deep .num {
               padding-left: 6px;
               font-size: 13px;
@@ -474,11 +496,8 @@ export default {
     width: 48px;
     height: 336px;
     position: fixed;
-    left: 50%;
     bottom: 48px;
-    display: flex;
     flex-direction: column;
-    justify-content: space-between;
     .control-button-container {
       width: 48px;
       height: 48px;
@@ -498,6 +517,19 @@ export default {
         }
       }
     }
+  }
+  .content-bar {
+    left: 50%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .tsukkomi-bar {
+    right: 50%;
+    display: none;
+    justify-content: flex-end;
+  }
+  .tsukkomi-bar-show {
+    display: flex;
   }
 }
 .book-page-tsu {
