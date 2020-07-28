@@ -48,11 +48,19 @@
                 {{ tsukkomi.tsukkomi_content }}
               </div>
               <div class="tsukkomi-options">
-                <div class="option-button" :class="{ 'like-selected': tsukkomi.is_like }">
+                <div
+                  class="option-button"
+                  :class="{ 'like-selected': tsukkomi.is_like }"
+                  @click="tsukkomiOperate(0, tsukkomi.tsukkomi_id)"
+                >
                   <i class="ri-thumb-up-line"></i>
                   <div class="num">{{ tsukkomi.like_amount }}</div>
                 </div>
-                <div class="option-button" :class="{ 'unlike-selected': tsukkomi.is_unlike }">
+                <div
+                  class="option-button"
+                  :class="{ 'unlike-selected': tsukkomi.is_unlike }"
+                  @click="tsukkomiOperate(1, tsukkomi.tsukkomi_id)"
+                >
                   <i class="ri-thumb-down-line"></i>
                   <div class="num">{{ tsukkomi.unlike_amount }}</div>
                 </div>
@@ -314,6 +322,21 @@ export default {
     },
     showCatalog() {
       this.$refs.catalog.showCatalog()
+    },
+    async tsukkomiOperate(unlike, tsukkomi_id) {
+      let url = ''
+      if (unlike) {
+        url = '/unlike_tsukkomi'
+      } else {
+        url = '/like_tsukkomi'
+      }
+      let result = await this.$get({
+        url: url,
+        urlParas: {
+          tsukkomi_id: tsukkomi_id
+        }
+      })
+      this.showTsu(this.tsukkomiIndex, this.tsukkomi_num, this.tsukkomiPage)
     },
     newTsukkomi() {
       console.log('撰写新间贴')
