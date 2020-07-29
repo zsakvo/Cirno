@@ -68,6 +68,7 @@ export default {
         let info = res.data
         this.$store.commit('setPropInfo', info.prop_info)
         this.$store.commit('setReaderInfo', info.reader_info)
+        this.confirmLoading = false
         this.visible = false
         this.$message.success('投票成功')
       })
