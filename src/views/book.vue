@@ -438,6 +438,8 @@ export default {
         justify-content: center;
         padding-bottom: 36px;
         border-top: 1px solid #e8e8e8;
+        background: #fff;
+        z-index: 30;
         .title {
           font-size: 24px;
           padding: 36px 0 24px 0;
