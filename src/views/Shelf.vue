@@ -91,6 +91,11 @@ export default {
     }
   },
   async created() {
+    let my_info = await this.$get({
+      url: '/my_info'
+    })
+    this.$store.commit('setPropInfo', my_info.data.prop_info)
+    this.$store.commit('setReaderInfo', my_info.data.reader_info)
     let hbooker_shelves = await this.$get({
       url: '/bookshelves'
     })

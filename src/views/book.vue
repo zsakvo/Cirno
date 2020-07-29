@@ -136,6 +136,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import PerfectScrollbar from 'perfect-scrollbar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import Paragraph from '../components/paragraph.vue'
@@ -182,6 +183,7 @@ export default {
   async created() {
     this.bid = this.$route.query.bid
     this.cid = this.$route.query.cid
+    console.log(this.prop_info)
     let book_info = await this.$get({
       url: '/book_info',
       urlParas: {
@@ -211,6 +213,9 @@ export default {
   },
   watch: {
     contentWidth(newValue) {}
+  },
+  computed: {
+    ...mapState(['prop_info', 'reader_info'])
   },
   methods: {
     windowSizeHandler() {
