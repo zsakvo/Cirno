@@ -329,7 +329,7 @@ export default {
         this.toChapterTop()
         this.toTsukkomiTop()
         this.containerScroll.destroy()
-        this.tsukkomiScroll.destroy()
+        this.tsukkomiScroll ? this.tsukkomiScroll.destroy() : null
         this.chapterIndex++
         let cid = this.book_chapterids[this.chapterIndex]
         this.getContent(cid)
