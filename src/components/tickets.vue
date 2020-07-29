@@ -10,16 +10,16 @@
         <div class="tickets">
           <div class="ticket">
             <div class="title">推荐票</div>
-            <a-input-number v-model="recommandNum" :min="0" :max="prop_info.rest_recommend" size="small" />
+            <a-input-number v-model="recommandNum" :min="0" :max="parseInt(prop_info.rest_recommend)" size="small" />
           </div>
-          <div class="ticket">
+          <!-- <div class="ticket">
             <div class="title">投月票</div>
             <a-input-number v-model="ypNum" :min="0" :max="prop_info.rest_yp" size="small" />
           </div>
           <div class="ticket">
             <div class="title">投刀片</div>
             <a-input-number v-model="bladeNum" :min="0" :max="prop_info.rest_month_blade" size="small" />
-          </div>
+          </div> -->
         </div>
         <div class="info">
           <div class="info-line">剩余推荐票 {{ prop_info.rest_recommend }}</div>
@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       visible: false,
+      bid: 0,
       recommandNum: 0,
       ypNum: 0,
       bladeNum: 0,
@@ -50,31 +51,25 @@ export default {
     ...mapState(['prop_info'])
   },
   methods: {
-    show() {
+    show(bid) {
       this.visible = true
-      this.restHlb = restHlb
-      this.maxRecommand = maxRecommand
+      this.bid = bid
     },
     cancel() {},
     post() {
-      console.log(this.tsukkomiContent)
       this.confirmLoading = true
-      this.$post({
-        url: '/add_tsukkomi',
-        paras: {
+      this.$get({
+        url: '/give_recommend',
+        urlParas: {
           book_id: this.bid,
-          chapter_id: this.cid,
-          paragraph_index: this.pid,
-          tsukkomi_content: this.tsukkomiContent
+          count: this.recommandNum
         }
       }).then(res => {
-        let tsukkomi_info = res.data.tsukkomi_info
-        let pid = tsukkomi_info.paragraph_index
-        this.confirmLoading = false
-        this.cancel()
-        this.$emit('refreshTsukkomi')
-        this.$emit('refreshPara', pid)
+        let info = res.data
+        this.$store.commit('setPropInfo', info.prop_info)
+        this.$store.commit('setReaderInfo', info.reader_info)
         this.visible = false
+        this.$message.success('投票成功')
       })
     }
   }

@@ -403,7 +403,7 @@ export default {
       this.getContent(this.cid)
     },
     giveTickets() {
-      this.$refs.tickets.show()
+      this.$refs.tickets.show(this.bid)
     }
   }
 }
