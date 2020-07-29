@@ -131,6 +131,7 @@
       ref="catalog"
     ></catalog>
     <Picture ref="picture" />
+    <Tsukkomi ref="tsukkomiWriter" />
   </div>
 </template>
 
@@ -140,11 +141,13 @@ import 'perfect-scrollbar/css/perfect-scrollbar.css'
 import Paragraph from '../components/paragraph.vue'
 import Catalog from '../components/catalog.vue'
 import Picture from '../components/picture.vue'
+import Tsukkomi from '../components/tsukkomi.vue'
 export default {
   components: {
     Paragraph,
     Catalog,
-    Picture
+    Picture,
+    Tsukkomi
   },
   data() {
     return {
@@ -361,6 +364,8 @@ export default {
     },
     newTsukkomi() {
       console.log('撰写新间贴')
+      console.log(this.$refs.tsukkomiWriter)
+      this.$refs.tsukkomiWriter.show()
     },
     showPic(url) {
       this.$refs.picture.showPic(url)
