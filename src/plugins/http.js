@@ -122,7 +122,7 @@ function post(obj) {
   let options = mixin
   options = Object.assign({}, options, obj)
   const parameter = options.paras
-  let url = options.url
+  let url = options.baseUrl + options.url
   const self = this
   return new Promise((resolve, reject) => {
     axios
@@ -144,12 +144,12 @@ function post(obj) {
             resolve(data)
           } else {
             // 请求失败了
+            vm.prototype.$message.error(data.tip)
             reject(data)
           }
         },
         err => {
           //请求出错了
-          reject(err)
         }
       )
   })

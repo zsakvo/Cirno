@@ -131,7 +131,7 @@
       ref="catalog"
     ></catalog>
     <Picture ref="picture" />
-    <Tsukkomi ref="tsukkomiWriter" />
+    <Tsukkomi ref="tsukkomiWriter" @refreshTsukkomi="refreshTsukkomi" @refreshPara="refreshPara" />
   </div>
 </template>
 
@@ -360,12 +360,18 @@ export default {
           tsukkomi_id: tsukkomi_id
         }
       })
+      this.refreshTsukkomi()
+    },
+    refreshTsukkomi() {
       this.showTsu(this.tsukkomiIndex, this.tsukkomi_num, this.tsukkomiPage, true)
+    },
+    refreshPara(pid) {
+      this.chapterContentData[pid].tsukkomi_num++
     },
     newTsukkomi() {
       console.log('撰写新间贴')
-      console.log(this.$refs.tsukkomiWriter)
-      this.$refs.tsukkomiWriter.show()
+      let text = this.chapterContentData[this.tsukkomiIndex].text
+      this.$refs.tsukkomiWriter.show(text, this.bid, this.cid, this.tsukkomiIndex)
     },
     showPic(url) {
       this.$refs.picture.showPic(url)
