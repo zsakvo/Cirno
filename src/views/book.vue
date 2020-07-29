@@ -19,7 +19,9 @@
           <div class="title">
             本章是 VIP 章节，购买后才能阅读
           </div>
-          <div class="subtitle">本章节需 {{ chapterAmount }} 币，共 {{ buyAmount }} 人购买</div>
+          <div class="subtitle">
+            本章节需 {{ chapterAmount }} 币，当前剩余 {{ prop_info.rest_hlb }} 币，共 {{ buyAmount }} 人购买
+          </div>
           <div class="buy-chapter-button" @click="buyChapter">购买本章</div>
           <div class="auto-buy"><a-radio>遇到收费章节自动购买</a-radio></div>
         </div>
@@ -384,13 +386,17 @@ export default {
       this.$refs.picture.showPic(url)
     },
     async buyChapter() {
-      let buy = await this.$get({
+      let buy_result = await this.$get({
         url: '/chapter_buy',
         urlParas: {
           chapter_id: this.cid
         }
       })
-      console.log(buy)
+      console.log(buy_result)
+      let prop_info = buy_result.data.prop_info
+      let reader_info = buy_result.data.reader_info
+      this.$store.commit('setPropInfo', prop_info)
+      this.$store.commit('setReaderInfo', reader_info)
       this.getContent(this.cid)
     }
   }
