@@ -108,7 +108,7 @@
       <div class="control-button-container">
         <i class="ri-download-cloud-2-line control-button"></i>
       </div>
-      <div class="control-button-container">
+      <div class="control-button-container" @click="giveTickets">
         <i class="ri-coupon-3-line control-button"></i>
       </div>
       <div class="control-button-container" @click="toChapterTop">
@@ -134,6 +134,7 @@
     ></catalog>
     <Picture ref="picture" />
     <Tsukkomi ref="tsukkomiWriter" @refreshTsukkomi="refreshTsukkomi" @refreshPara="refreshPara" />
+    <Tickets ref="tickets" />
   </div>
 </template>
 
@@ -145,12 +146,14 @@ import Paragraph from '../components/paragraph.vue'
 import Catalog from '../components/catalog.vue'
 import Picture from '../components/picture.vue'
 import Tsukkomi from '../components/tsukkomi.vue'
+import Tickets from '../components/tickets.vue'
 export default {
   components: {
     Paragraph,
     Catalog,
     Picture,
-    Tsukkomi
+    Tsukkomi,
+    Tickets
   },
   data() {
     return {
@@ -398,6 +401,9 @@ export default {
       this.$store.commit('setPropInfo', prop_info)
       this.$store.commit('setReaderInfo', reader_info)
       this.getContent(this.cid)
+    },
+    giveTickets() {
+      this.$refs.tickets.show()
     }
   }
 }
