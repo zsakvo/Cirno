@@ -367,6 +367,7 @@ export default {
     },
     refreshPara(pid) {
       this.chapterContentData[pid].tsukkomi_num++
+      this.tsukkomi_num++
     },
     newTsukkomi() {
       console.log('撰写新间贴')
