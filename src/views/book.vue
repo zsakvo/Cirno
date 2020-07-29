@@ -101,13 +101,13 @@
         <i class="ri-menu-line control-button"></i>
       </div>
       <div class="control-button-container" @click="showTsu">
-        <i class="ri-font-size-2 control-button"></i>
+        <i class="ri-settings-line control-button"></i>
       </div>
       <div class="control-button-container">
-        <i class="ri-pantone-line control-button"></i>
+        <i class="ri-download-cloud-2-line control-button"></i>
       </div>
       <div class="control-button-container">
-        <i class="ri-moon-line control-button"></i>
+        <i class="ri-coupon-3-line control-button"></i>
       </div>
       <div class="control-button-container" @click="toChapterTop">
         <i class="ri-arrow-up-s-line control-button"></i>
