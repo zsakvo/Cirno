@@ -140,7 +140,7 @@ function post(obj) {
       .then(
         response => {
           let data = response.data
-          if (!data.failed) {
+          if (data.success) {
             resolve(data)
           } else {
             // 请求失败了

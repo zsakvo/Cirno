@@ -17,7 +17,7 @@
       </div>
       <div class="button">
         <div class="login-button">
-          <a-button type="primary" size="large" block shape="round">
+          <a-button type="primary" :loading="confirmLoading" size="large" block shape="round" @click="login">
             登录
           </a-button>
         </div>
@@ -32,8 +32,31 @@ export default {
   data() {
     return {
       sidePic: require('@/assets/side.png'),
+      confirmLoading: false,
       userName: '',
       password: ''
+    }
+  },
+  methods: {
+    login() {
+      this.confirmLoading = true
+      let login_res = this.$post({
+        url: '/login',
+        paras: {
+          name: this.userName,
+          passwd: this.password
+        }
+      }).then(
+        res => {
+          this.confirmLoading = false
+          this.$router.push({
+            name: 'Shelf'
+          })
+        },
+        err => {
+          this.confirmLoading = false
+        }
+      )
     }
   }
 }
