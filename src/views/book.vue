@@ -240,6 +240,7 @@ export default {
           chapter_id: cid
         }
       })
+      this.setLastRead()
       this.chapter_info = chapter_info.data.chapter_info
       this.chapter_info.auth_access === '1' ? (this.auth = true) : (this.auth = false)
       this.chapterAmount = this.chapter_info.unit_hlb
@@ -404,6 +405,15 @@ export default {
     },
     giveTickets() {
       this.$refs.tickets.show(this.bid)
+    },
+    setLastRead() {
+      this.$get({
+        url: '/set_last_read',
+        urlParas: {
+          book_id: this.bid,
+          chapter_id: this.cid
+        }
+      })
     }
   }
 }
