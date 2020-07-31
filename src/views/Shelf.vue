@@ -4,13 +4,13 @@
       <div class="header-title">
         <div class="title-text">Cirno</div>
       </div>
-      <div class="search-container">
+      <!-- <div class="search-container">
         <div class="components-input-demo-presuffix">
           <a-input id="searchBox" v-model="searchStr" placeholder="搜索书籍或作者">
             <a-icon slot="prefix" type="search" class="search-icon" />
           </a-input>
         </div>
-      </div>
+      </div> -->
       <div class="right-container">
         <div class="menu-container">
           <a-dropdown>
@@ -30,27 +30,6 @@
           </a-dropdown>
           <div class="menu">设置</div>
           <div class="menu">关于</div>
-          <!-- <a-menu v-model="currentTopMenu" mode="horizontal">
-            <a-menu-item key="shelf">
-              <a-popover title="切换书架">
-                <template slot="content">
-                  <div v-for="shelf in hbooker_shelves" :key="shelf.shelf_id" @click="clickShelfItem(shelf.shelf_id)">
-                    {{ shelf.shelf_name }}
-                  </div>
-                </template>
-                <div class="item-content">书架</div>
-              </a-popover>
-            </a-menu-item>
-            <a-menu-item key="rss">
-              <div class="item-content">RSS</div>
-            </a-menu-item>
-            <a-menu-item key=" settings">
-              <div class="item-content">设置</div>
-            </a-menu-item>
-            <a-menu-item key="about">
-              <div class="item-content">关于</div>
-            </a-menu-item>
-          </a-menu> -->
         </div>
       </div>
     </div>
@@ -181,7 +160,7 @@ export default {
       margin: 0 40px;
       width: 180px;
       .title-text {
-        color: #000000;
+        color: #464646;
         font-weight: 500;
         display: inline-block;
         font-size: 20px;
