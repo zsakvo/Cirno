@@ -10,7 +10,8 @@ import {
   Affix,
   Modal,
   Radio,
-  InputNumber
+  InputNumber,
+  Checkbox
 } from 'ant-design-vue'
 Vue.use(Pagination)
 Vue.use(Button)
@@ -24,4 +25,5 @@ Vue.use(Pagination)
 Vue.use(Modal)
 Vue.use(Radio)
 Vue.use(InputNumber)
+Vue.use(Checkbox)
 Vue.prototype.$message = message

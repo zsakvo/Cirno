@@ -17,6 +17,9 @@
           </div>
         </div>
         <div class="button">
+          <a-checkbox v-model="remUser" class="checkbox">
+            记住密码
+          </a-checkbox>
           <div class="login-button">
             <a-button type="primary" :loading="confirmLoading" size="large" block shape="round" @click="login">
               登录
@@ -36,7 +39,16 @@ export default {
       sidePic: require('@/assets/side.png'),
       confirmLoading: false,
       userName: '',
-      password: ''
+      password: '',
+      remUser: false
+    }
+  },
+  created() {
+    if (localStorage.getItem('loginInfo')) {
+      let json = JSON.parse(localStorage.getItem('loginInfo'))
+      this.userName = json.userName
+      this.password = json.passwd
+      this.remUser = true
     }
   },
   methods: {
@@ -50,6 +62,15 @@ export default {
         }
       }).then(
         res => {
+          if (this.remUser) {
+            localStorage.setItem(
+              'loginInfo',
+              JSON.stringify({
+                userName: this.userName,
+                passwd: this.password
+              })
+            )
+          }
           this.confirmLoading = false
           this.$router.push({
             name: 'Shelf'
@@ -79,15 +100,19 @@ export default {
     }
   }
   .side-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     flex: 1;
     background: #fafafa;
     .login-box {
-      margin-top: 30%;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      margin-bottom: 96px;
-      padding: 0 12vw;
+      padding-bottom: 156px;
+      margin: 0 auto;
+      width: 36vw;
+      min-width: 412px;
       .title {
         font-weight: 600;
         font-size: 24px;
@@ -101,8 +126,17 @@ export default {
         }
       }
       .button {
-        width: 40%;
+        width: 100%;
         margin-top: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .login-button {
+          width: 40%;
+        }
+        .checkbox {
+          user-select: none;
+        }
       }
     }
   }
