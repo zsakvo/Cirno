@@ -11,7 +11,9 @@ import {
   Modal,
   Radio,
   InputNumber,
-  Checkbox
+  Checkbox,
+  Popover,
+  Dropdown
 } from 'ant-design-vue'
 Vue.use(Pagination)
 Vue.use(Button)
@@ -26,4 +28,6 @@ Vue.use(Modal)
 Vue.use(Radio)
 Vue.use(InputNumber)
 Vue.use(Checkbox)
+Vue.use(Popover)
+Vue.use(Dropdown)
 Vue.prototype.$message = message

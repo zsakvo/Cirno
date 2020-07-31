@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
     <div class="header">
       <div class="header-title">
         <div class="title-text">Cirno</div>
@@ -14,9 +13,33 @@
       </div>
       <div class="right-container">
         <div class="menu-container">
-          <a-menu v-model="currentTopMenu" mode="horizontal">
+          <a-dropdown>
+            <a class="ant-dropdown-link menu" @click="e => e.preventDefault()">
+              书架
+              <a-icon type="down" />
+            </a>
+            <a-menu slot="overlay">
+              <a-menu-item
+                v-for="shelf in hbooker_shelves"
+                :key="shelf.shelf_id"
+                @click="clickShelfItem(shelf.shelf_id)"
+              >
+                <div>{{ shelf.shelf_name }}</div>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+          <div class="menu">设置</div>
+          <div class="menu">关于</div>
+          <!-- <a-menu v-model="currentTopMenu" mode="horizontal">
             <a-menu-item key="shelf">
-              <div class="item-content">书架</div>
+              <a-popover title="切换书架">
+                <template slot="content">
+                  <div v-for="shelf in hbooker_shelves" :key="shelf.shelf_id" @click="clickShelfItem(shelf.shelf_id)">
+                    {{ shelf.shelf_name }}
+                  </div>
+                </template>
+                <div class="item-content">书架</div>
+              </a-popover>
             </a-menu-item>
             <a-menu-item key="rss">
               <div class="item-content">RSS</div>
@@ -27,12 +50,12 @@
             <a-menu-item key="about">
               <div class="item-content">关于</div>
             </a-menu-item>
-          </a-menu>
+          </a-menu> -->
         </div>
       </div>
     </div>
     <div class="page">
-      <a-affix :offset-top="0">
+      <!-- <a-affix :offset-top="0">
         <div class="nav-container">
           <a-menu v-model="currentSideItemSelected" :open-keys="sideOpenKeys" mode="inline">
             <a-sub-menu key="hbooker">
@@ -49,7 +72,7 @@
             </a-sub-menu>
           </a-menu>
         </div>
-      </a-affix>
+      </a-affix> -->
       <div class="content-container">
         <div v-show="loadingBooks === 0" class="skeleton-container">
           <a-skeleton active />
@@ -81,9 +104,7 @@ export default {
   data() {
     return {
       searchStr: '',
-      currentTopMenu: ['shelf'],
-      sideOpenKeys: ['hbooker'],
-      currentSideItemSelected: [],
+      currentShelfId: 0,
       hbooker_shelves: [],
       loadingBooks: 0,
       book_list: [],
@@ -95,28 +116,35 @@ export default {
       url: '/bookshelves'
     })
     this.hbooker_shelves = hbooker_shelves.data.shelf_list
-    this.currentSideItemSelected = [this.hbooker_shelves[0].shelf_id]
-    let book_list = await this.$get({
-      url: '/shelf_books',
-      urlParas: {
-        shelf_id: this.currentSideItemSelected[0]
-      }
-    })
-    this.book_list = book_list.data.book_list
-    this.loadingBooks = 1
-    this.$nextTick(() => {
-      this.shelfScroll = new PerfectScrollbar(this.$refs.booksContainer, {
-        wheelSpeed: 2,
-        wheelPropagation: true,
-        minScrollbarLength: 20
-      })
-    })
+    this.currentShelfId = this.hbooker_shelves[0].shelf_id
+    this.getBooks()
   },
   watch: {},
   methods: {
+    async getBooks() {
+      let book_list = await this.$get({
+        url: '/shelf_books',
+        urlParas: {
+          shelf_id: this.currentShelfId
+        }
+      })
+      this.book_list = book_list.data.book_list
+      this.loadingBooks = 1
+      this.$nextTick(() => {
+        this.shelfScroll = new PerfectScrollbar(this.$refs.booksContainer, {
+          wheelSpeed: 2,
+          wheelPropagation: true,
+          minScrollbarLength: 20
+        })
+      })
+    },
     clickShelfItem(id) {
-      if (id === this.currentSideItemSelected[0]) {
+      if (id === this.currentShelfId) {
         this.$refs.booksContainer.scrollTo(0, 0)
+      } else {
+        this.loadingBooks = 0
+        this.currentShelfId = id
+        this.getBooks()
       }
     },
     gotoBook(book) {
@@ -184,11 +212,20 @@ export default {
       justify-content: flex-end;
       padding-right: 40px;
       .menu-container {
+        display: flex;
         &::v-deep .ant-menu {
           border-bottom: none;
           .ant-menu-item {
             border-bottom: 0;
           }
+        }
+        .menu {
+          font-size: 15px;
+          margin: 0 24px;
+          cursor: pointer;
+        }
+        .menu-selected {
+          color: #1b88ee;
         }
       }
     }
@@ -264,6 +301,15 @@ export default {
           }
         }
       }
+    }
+  }
+}
+
+&::v-deep .ant-popover {
+  .ant-popover-content {
+    .ant-popover-title {
+      padding: 16px;
+      text-align: center;
     }
   }
 }
