@@ -91,45 +91,26 @@ export default {
     }
   },
   async created() {
-    this.$get({
-      url: '/my_info'
-    }).then(
-      async res => {
-        let my_info = res
-        this.$store.commit('setPropInfo', my_info.data.prop_info)
-        this.$store.commit('setReaderInfo', my_info.data.reader_info)
-        let hbooker_shelves = await this.$get({
-          url: '/bookshelves'
-        })
-        this.hbooker_shelves = hbooker_shelves.data.shelf_list
-        this.currentSideItemSelected = [this.hbooker_shelves[0].shelf_id]
-        let book_list = await this.$get({
-          url: '/shelf_books',
-          urlParas: {
-            shelf_id: this.currentSideItemSelected[0]
-          }
-        })
-        this.book_list = book_list.data.book_list
-        this.loadingBooks = 1
-        this.$nextTick(() => {
-          this.shelfScroll = new PerfectScrollbar(this.$refs.booksContainer, {
-            wheelSpeed: 2,
-            wheelPropagation: true,
-            minScrollbarLength: 20
-          })
-        })
-      },
-      err => {
-        switch (err.code) {
-          case 200100:
-            //需要登入
-            this.$router.push({
-              name: 'Login'
-            })
-            break
-        }
+    let hbooker_shelves = await this.$get({
+      url: '/bookshelves'
+    })
+    this.hbooker_shelves = hbooker_shelves.data.shelf_list
+    this.currentSideItemSelected = [this.hbooker_shelves[0].shelf_id]
+    let book_list = await this.$get({
+      url: '/shelf_books',
+      urlParas: {
+        shelf_id: this.currentSideItemSelected[0]
       }
-    )
+    })
+    this.book_list = book_list.data.book_list
+    this.loadingBooks = 1
+    this.$nextTick(() => {
+      this.shelfScroll = new PerfectScrollbar(this.$refs.booksContainer, {
+        wheelSpeed: 2,
+        wheelPropagation: true,
+        minScrollbarLength: 20
+      })
+    })
   },
   watch: {},
   methods: {

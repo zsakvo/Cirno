@@ -188,7 +188,6 @@ export default {
   async created() {
     this.bid = this.$route.query.bid
     this.cid = this.$route.query.cid
-    console.log(this.prop_info)
     let book_info = await this.$get({
       url: '/book_info',
       urlParas: {
@@ -240,9 +239,13 @@ export default {
           chapter_id: cid
         }
       })
-      this.setLastRead()
       this.chapter_info = chapter_info.data.chapter_info
-      this.chapter_info.auth_access === '1' ? (this.auth = true) : (this.auth = false)
+      if (this.chapter_info.auth_access === '1') {
+        this.auth = true
+        this.setLastRead()
+      } else {
+        this.auth = false
+      }
       this.chapterAmount = this.chapter_info.unit_hlb
       this.buyAmount = this.chapter_info.buy_amount
       this.chapterTitle = this.chapter_info.chapter_title
@@ -382,7 +385,6 @@ export default {
       this.tsukkomi_num++
     },
     newTsukkomi() {
-      console.log('撰写新间贴')
       let text = this.chapterContentData[this.tsukkomiIndex].text
       this.$refs.tsukkomiWriter.show(text, this.bid, this.cid, this.tsukkomiIndex)
     },
@@ -396,7 +398,6 @@ export default {
           chapter_id: this.cid
         }
       })
-      console.log(buy_result)
       let prop_info = buy_result.data.prop_info
       let reader_info = buy_result.data.reader_info
       this.$store.commit('setPropInfo', prop_info)

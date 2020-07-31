@@ -10,7 +10,28 @@ export default {
   data() {
     return {}
   },
-  components: {}
+  components: {},
+  created() {
+    this.$get({
+      url: '/my_info'
+    }).then(
+      async res => {
+        let my_info = res
+        this.$store.commit('setPropInfo', my_info.data.prop_info)
+        this.$store.commit('setReaderInfo', my_info.data.reader_info)
+      },
+      err => {
+        switch (err.code) {
+          case 200100:
+            //需要登入
+            this.$router.push({
+              name: 'Login'
+            })
+            break
+        }
+      }
+    )
+  }
 }
 </script>
 
