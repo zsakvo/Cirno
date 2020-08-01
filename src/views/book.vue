@@ -23,7 +23,7 @@
             本章节需 {{ chapterAmount }} 币，当前剩余 {{ prop_info.rest_hlb }} 币，共 {{ buyAmount }} 人购买
           </div>
           <div class="buy-chapter-button" @click="buyChapter">购买本章</div>
-          <div class="auto-buy"><a-radio>遇到收费章节自动购买</a-radio></div>
+          <!-- <div class="auto-buy"><a-radio>遇到收费章节自动购买</a-radio></div> -->
         </div>
         <div class="book-footer" v-show="auth">
           <div class="next-chapter-button" @click="nextChapter">下一章</div>
@@ -102,10 +102,10 @@
       <div class="control-button-container" @click="showCatalog">
         <i class="ri-menu-line control-button"></i>
       </div>
-      <div class="control-button-container" @click="showTsu">
+      <div class="control-button-container" @click="noAccess">
         <i class="ri-settings-line control-button"></i>
       </div>
-      <div class="control-button-container">
+      <div class="control-button-container" @click="noAccess">
         <i class="ri-download-cloud-2-line control-button"></i>
       </div>
       <div class="control-button-container" @click="giveTickets">
@@ -415,6 +415,9 @@ export default {
           chapter_id: this.cid
         }
       })
+    },
+    noAccess() {
+      this.$message.info('此功能尚未开放')
     }
   }
 }

@@ -130,6 +130,7 @@ export default {
   },
   methods: {
     async getBooks() {
+      this.shelfScroll ? this.shelfScroll.destroy() : null
       let book_list = await this.$get({
         url: '/shelf_books',
         urlParas: {
