@@ -140,11 +140,15 @@ export default {
       this.book_list = book_list.data.book_list
       this.loadingBooks = 1
       this.$nextTick(() => {
-        this.shelfScroll = new PerfectScrollbar(this.$refs.booksContainer, {
-          wheelSpeed: 2,
-          wheelPropagation: true,
-          minScrollbarLength: 20
-        })
+        try {
+          this.shelfScroll = new PerfectScrollbar(this.$refs.booksContainer, {
+            wheelSpeed: 2,
+            wheelPropagation: true,
+            minScrollbarLength: 20
+          })
+        } catch (err) {
+          return null
+        }
       })
     },
     clickShelfItem(id) {
