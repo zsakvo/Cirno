@@ -25,7 +25,7 @@
           一个网页版刺猬猫第三方阅读器
         </div>
         <div class="buttons">
-          <div class="git-btn">
+          <div class="git-btn" @click="gotoGit">
             <i class="ri-github-fill icon"></i>
             <div class="text-1">GitHub</div>
             <div class="text-2">GPLv3</div>
@@ -65,6 +65,9 @@ export default {
       this.$router.push({
         name: 'About'
       })
+    },
+    gotoGit() {
+      window.open('https://github.com/zsakvo/cirno-web', '_blank')
     }
   }
 }

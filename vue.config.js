@@ -1,15 +1,6 @@
 module.exports = {
   lintOnSave: true,
-  productionSourceMap: true,
-  pwa: {
-    iconPaths: {
-      favicon32: 'favicon.ico',
-      favicon16: 'favicon.ico',
-      appleTouchIcon: 'favicon.ico',
-      maskIcon: 'favicon.ico',
-      msTileImage: 'favicon.ico'
-    }
-  },
+  productionSourceMap: true, 
   devServer: {
     port: 9012,
     open: false,
