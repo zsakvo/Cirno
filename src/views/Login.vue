@@ -71,6 +71,7 @@ export default {
               })
             )
           }
+          this.$emit('getInfo')
           this.confirmLoading = false
           this.$router.push({
             name: 'Shelf'

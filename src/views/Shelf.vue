@@ -87,6 +87,25 @@ export default {
     if (this.avatar) {
       this.tempAvatar = this.avatar
     }
+    let sign_record_list = await this.$get({
+      url: '/sign_record'
+    })
+    sign_record_list = sign_record_list.data.sign_record_list
+    let date = new Date()
+    let today = date.getDay()
+    if (sign_record_list[today - 1]['is_signed'] === -1) {
+      console.log('开始签到。。。')
+      let sign_recommend = await this.$get({
+        url: '/sign_recommend'
+      }).then(res => {
+        let my_info = res.data
+        let bonus = my_info.bonus
+        this.$store.commit('setPropInfo', my_info.prop_info)
+        this.$store.commit('setReaderInfo', my_info.reader_info)
+        this.$message.success(`签到成功，${bonus.hlb}代币，${bonus.exp}经验,获得${bonus.recommend}推荐票。`)
+      })
+      console.log(sign_recommend)
+    }
     this.$get({
       url: '/bookshelves'
     }).then(
@@ -106,7 +125,7 @@ export default {
   },
   computed: {
     avatar() {
-      return this.$store.state.reader_info ? this.$store.state.reader_info.avatar_thumb_url : null
+      return this.$store.state.reader_info.avatar_thumb_url
     }
   },
   methods: {
