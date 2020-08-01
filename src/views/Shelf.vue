@@ -13,6 +13,17 @@
       </div> -->
       <div class="right-container">
         <div class="menu-container">
+          <!-- <a-popover>
+            <template slot="content">
+              <UserCard />
+            </template>
+            <div class="menu">
+              <img :src="tempAvatar" class="avatar" />
+            </div>
+          </a-popover> -->
+          <div class="menu">
+            <img :src="tempAvatar" class="avatar" @click="gotoLogin" />
+          </div>
           <a-dropdown>
             <a class="ant-dropdown-link menu" @click="e => e.preventDefault()">
               书架
@@ -54,10 +65,13 @@
 <script>
 import PerfectScrollbar from 'perfect-scrollbar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
+// import UserCard from '../components/user-card.vue'
 
 export default {
   name: 'Home',
-  components: {},
+  components: {
+    // UserCard
+  },
   data() {
     return {
       searchStr: '',
@@ -65,18 +79,36 @@ export default {
       hbooker_shelves: [],
       loadingBooks: 0,
       book_list: [],
-      shelfScroll: null
+      shelfScroll: null,
+      tempAvatar: require('@/assets/d_avatar.jpg')
     }
   },
   async created() {
-    let hbooker_shelves = await this.$get({
+    if (this.avatar) {
+      this.tempAvatar = this.avatar
+    }
+    this.$get({
       url: '/bookshelves'
-    })
-    this.hbooker_shelves = hbooker_shelves.data.shelf_list
-    this.currentShelfId = this.hbooker_shelves[0].shelf_id
-    this.getBooks()
+    }).then(
+      res => {
+        let hbooker_shelves = res
+        this.hbooker_shelves = hbooker_shelves.data.shelf_list
+        this.currentShelfId = this.hbooker_shelves[0].shelf_id
+        this.getBooks()
+      },
+      err => {}
+    )
   },
-  watch: {},
+  watch: {
+    avatar(newVal) {
+      this.tempAvatar = newVal
+    }
+  },
+  computed: {
+    avatar() {
+      return this.$store.state.reader_info ? this.$store.state.reader_info.avatar_thumb_url : null
+    }
+  },
   methods: {
     async getBooks() {
       let book_list = await this.$get({
@@ -111,6 +143,11 @@ export default {
           bid: book.book_info.book_id,
           cid: book.last_read_chapter_id
         }
+      })
+    },
+    gotoLogin() {
+      this.$router.push({
+        name: 'Login'
       })
     },
     gotoShelf() {
@@ -185,6 +222,7 @@ export default {
       padding-right: 40px;
       .menu-container {
         display: flex;
+        align-items: center;
         &::v-deep .ant-menu {
           border-bottom: none;
           .ant-menu-item {
@@ -195,6 +233,11 @@ export default {
           font-size: 15px;
           margin: 0 24px;
           cursor: pointer;
+          .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+          }
         }
         .menu-selected {
           color: #1b88ee;
