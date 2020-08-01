@@ -29,29 +29,11 @@
             </a-menu>
           </a-dropdown>
           <div class="menu">设置</div>
-          <div class="menu">关于</div>
+          <div class="menu" @click="gotoAbout">关于</div>
         </div>
       </div>
     </div>
     <div class="page">
-      <!-- <a-affix :offset-top="0">
-        <div class="nav-container">
-          <a-menu v-model="currentSideItemSelected" :open-keys="sideOpenKeys" mode="inline">
-            <a-sub-menu key="hbooker">
-              <span slot="title">
-                <span>刺猬猫</span>
-              </span>
-              <a-menu-item
-                v-for="shelf in hbooker_shelves"
-                :key="shelf.shelf_id"
-                @click="clickShelfItem(shelf.shelf_id)"
-              >
-                {{ shelf.shelf_name }}
-              </a-menu-item>
-            </a-sub-menu>
-          </a-menu>
-        </div>
-      </a-affix> -->
       <div class="content-container">
         <div v-show="loadingBooks === 0" class="skeleton-container">
           <a-skeleton active />
@@ -70,16 +52,12 @@
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
 import PerfectScrollbar from 'perfect-scrollbar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
 
 export default {
   name: 'Home',
-  components: {
-    // HelloWorld
-  },
+  components: {},
   data() {
     return {
       searchStr: '',
@@ -133,6 +111,21 @@ export default {
           bid: book.book_info.book_id,
           cid: book.last_read_chapter_id
         }
+      })
+    },
+    gotoShelf() {
+      this.$router.push({
+        name: 'Shelf'
+      })
+    },
+    gotoSettings() {
+      this.$router.push({
+        name: 'Settings'
+      })
+    },
+    gotoAbout() {
+      this.$router.push({
+        name: 'About'
       })
     }
   }
