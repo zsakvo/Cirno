@@ -7,7 +7,7 @@
       <div class="right-container">
         <div class="menu-container">
           <div class="menu" @click="gotoShelf">书架</div>
-          <div class="menu" @click="gotoSettings">设置</div>
+          <!-- <div class="menu" @click="gotoSettings">设置</div> -->
           <div class="menu menu-selected" @click="gotoAbout">关于</div>
         </div>
       </div>

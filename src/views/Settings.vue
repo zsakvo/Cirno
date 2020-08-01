@@ -17,9 +17,6 @@
 </template>
 
 <script>
-import PerfectScrollbar from 'perfect-scrollbar'
-import 'perfect-scrollbar/css/perfect-scrollbar.css'
-
 export default {
   name: 'Home',
   components: {},

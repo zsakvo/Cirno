@@ -28,7 +28,7 @@
               </a-menu-item>
             </a-menu>
           </a-dropdown>
-          <div class="menu">设置</div>
+          <!-- <div class="menu">设置</div> -->
           <div class="menu" @click="gotoAbout">关于</div>
         </div>
       </div>
