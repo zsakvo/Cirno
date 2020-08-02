@@ -93,7 +93,8 @@ export default {
     sign_record_list = sign_record_list.data.sign_record_list
     let date = new Date()
     let today = date.getDay()
-    if (sign_record_list[today - 1]['is_signed'] === -1) {
+    let dayArr = [6, 0, 1, 2, 3, 4, 5]
+    if (sign_record_list[dayArr[today]]['is_signed'] !== 1) {
       console.log('开始签到。。。')
       let sign_recommend = await this.$get({
         url: '/sign_recommend'
