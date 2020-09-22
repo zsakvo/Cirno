@@ -98,6 +98,9 @@
       class="control-bar-container content-bar"
       :style="{ 'margin-left': controlBarLeftMargin + 'px' }"
     >
+      <div class="control-button-container" @click="toHome">
+        <i class="ri-home-line control-button"></i>
+      </div>
       <div class="control-button-container" @click="showCatalog">
         <i class="ri-menu-line control-button"></i>
       </div>
@@ -303,6 +306,11 @@ export default {
           wheelPropagation: false,
           minScrollbarLength: 20
         })
+      })
+    },
+    toHome() {
+      this.$router.push({
+        name: 'Shelf'
       })
     },
     toChapterTop() {
