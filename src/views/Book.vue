@@ -23,7 +23,6 @@
             本章节需 {{ chapterAmount }} 币，当前剩余 {{ prop_info.rest_hlb }} 币，共 {{ buyAmount }} 人购买
           </div>
           <div class="buy-chapter-button" @click="buyChapter">购买本章</div>
-          <!-- <div class="auto-buy"><a-radio>遇到收费章节自动购买</a-radio></div> -->
         </div>
         <div class="book-footer" v-show="auth">
           <div class="next-chapter-button" @click="nextChapter">下一章</div>
@@ -250,7 +249,10 @@ export default {
       this.buyAmount = this.chapter_info.buy_amount
       this.chapterTitle = this.chapter_info.chapter_title
       let txt_content = this.chapter_info.txt_content
-      let contentArray = [this.chapterTitle, ...txt_content.split('\n')]
+      let content_arr = txt_content.split('\n')
+      content_arr.pop()
+      let author_say = this.chapter_info.author_say
+      let contentArray = [this.chapterTitle, ...content_arr, ...author_say.split('\n')]
       contentArray = contentArray.map(ca => {
         let obj = {}
         obj.text = ca

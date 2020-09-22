@@ -1,6 +1,6 @@
 module.exports = {
   lintOnSave: true,
-  productionSourceMap: true, 
+  productionSourceMap: true,
   devServer: {
     port: 9012,
     open: false,
