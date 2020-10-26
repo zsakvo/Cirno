@@ -9,7 +9,7 @@
         <div class="change-shelf option-icon">
           <i class="ri-loader-4-line"></i>
         </div>
-        <div class="change-shelf option-icon">
+        <div class="change-shelf option-icon" @click="beginCheckIn(checkIn)">
           <i :class="{ 'ri-calendar-check-line': checkIn, 'ri-calendar-line': !checkIn }"></i>
         </div>
         <div class="change-shelf option-icon">
@@ -45,7 +45,7 @@ export default {
   },
   created() {
     this.getInfo()
-    this.checkSign()
+    this.isCheckIn()
     this.$get({
       url: '/bookshelf/get_shelf_list',
       urlParas: {}
@@ -82,7 +82,7 @@ export default {
         }
       )
     },
-    async checkSign() {
+    async isCheckIn() {
       let sign_record_list = await this.$get({
         url: '/task/get_sign_record'
       })
@@ -91,8 +91,27 @@ export default {
       let date = new Date()
       let today = date.getDay()
       let dayArr = [6, 0, 1, 2, 3, 4, 5]
-      this.checkIn = sign_record_list[dayArr[today]]['is_signed'] !== 1
+      this.checkIn = sign_record_list[dayArr[today]]['is_signed'] === '1'
       console.log(this.checkIn)
+    },
+    async beginCheckIn(checkIn) {
+      if (checkIn) {
+        this.$message.warn(`请勿重复签到。`)
+      } else {
+        let sign_recommend = await this.$get({
+          url: '/reader/get_task_bonus_with_sign_recommend',
+          urlParas: {
+            task_type: 1
+          }
+        }).then(res => {
+          this.checkIn = true
+          let my_info = res.data
+          let bonus = my_info.bonus
+          this.$store.commit('setPropInfo', my_info.prop_info)
+          this.$store.commit('setReaderInfo', my_info.reader_info)
+          this.$message.success(`签到成功，${bonus.hlb}代币，${bonus.exp}经验,获得${bonus.recommend}推荐票。`)
+        })
+      }
     },
     async getBooks() {
       let book_list = await this.$get({
