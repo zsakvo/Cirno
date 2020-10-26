@@ -74,9 +74,9 @@ export default {
     post() {
       console.log(this.tsukkomiContent)
       this.confirmLoading = true
-      this.$post({
-        url: '/add_tsukkomi',
-        paras: {
+      this.$get({
+        url: '/chapter/add_tsukkomi',
+        urlParas: {
           book_id: this.bid,
           chapter_id: this.cid,
           paragraph_index: this.pid,

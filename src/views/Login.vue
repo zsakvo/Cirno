@@ -54,14 +54,17 @@ export default {
   methods: {
     login() {
       this.confirmLoading = true
-      let login_res = this.$post({
-        url: '/login',
-        paras: {
-          name: this.userName,
+      let login_res = this.$get({
+        url: '/signup/login',
+        urlParas: {
+          login_name: this.userName,
           passwd: this.password
         }
       }).then(
         res => {
+          console.log(res)
+          localStorage.setItem('login_token', res.data.login_token)
+          localStorage.setItem('account', res.data.reader_info.account)
           if (this.remUser) {
             localStorage.setItem(
               'loginInfo',

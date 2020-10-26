@@ -84,33 +84,43 @@ export default {
     }
   },
   async created() {
+    let baseUrl = localStorage.getItem('baseUrl')
+    console.log(baseUrl)
+    if (!baseUrl) {
+      this.$store.commit('baseUrl', baseUrl)
+    }
     if (this.avatar) {
       this.tempAvatar = this.avatar
     }
     let sign_record_list = await this.$get({
-      url: '/sign_record'
+      url: '/task/get_sign_record'
     })
     sign_record_list = sign_record_list.data.sign_record_list
+    console.log(sign_record_list)
     let date = new Date()
     let today = date.getDay()
     let dayArr = [6, 0, 1, 2, 3, 4, 5]
-    if (sign_record_list[dayArr[today]]['is_signed'] !== 1) {
-      console.log('开始签到。。。')
-      let sign_recommend = await this.$get({
-        url: '/sign_recommend'
-      }).then(res => {
-        let my_info = res.data
-        let bonus = my_info.bonus
-        this.$store.commit('setPropInfo', my_info.prop_info)
-        this.$store.commit('setReaderInfo', my_info.reader_info)
-        this.$message.success(`签到成功，${bonus.hlb}代币，${bonus.exp}经验,获得${bonus.recommend}推荐票。`)
-      })
-      console.log(sign_recommend)
-    }
+    // if (sign_record_list[dayArr[today]]['is_signed'] !== 1) {
+    //   console.log('开始签到。。。')
+    //   let sign_recommend = await this.$get({
+    //     url: '/reader/get_task_bonus_with_sign_recommend',
+    //     urlParas: {
+    //       task_type: 1
+    //     }
+    //   }).then(res => {
+    //     let my_info = res.data
+    //     let bonus = my_info.bonus
+    //     this.$store.commit('setPropInfo', my_info.prop_info)
+    //     this.$store.commit('setReaderInfo', my_info.reader_info)
+    //     this.$message.success(`签到成功，${bonus.hlb}代币，${bonus.exp}经验,获得${bonus.recommend}推荐票。`)
+    //   })
+    // }
     this.$get({
-      url: '/bookshelves'
+      url: '/bookshelf/get_shelf_list',
+      urlParas: {}
     }).then(
       res => {
+        console.log(res)
         let hbooker_shelves = res
         this.hbooker_shelves = hbooker_shelves.data.shelf_list
         this.currentShelfId = this.hbooker_shelves[0].shelf_id
@@ -133,9 +143,12 @@ export default {
     async getBooks() {
       this.shelfScroll ? this.shelfScroll.destroy() : null
       let book_list = await this.$get({
-        url: '/shelf_books',
+        url: '/bookshelf/get_shelf_book_list_new',
         urlParas: {
-          shelf_id: this.currentShelfId
+          shelf_id: this.currentShelfId,
+          count: 9999,
+          page: 0,
+          order: 'last_read_time'
         }
       })
       this.book_list = book_list.data.book_list
