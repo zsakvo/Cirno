@@ -5,10 +5,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    baseUrl: '',
     prop_info: {},
     reader_info: {}
   },
   mutations: {
+    setBaseUrl(state, url) {
+      state.baseUrl = url
+    },
     setPropInfo(state, info) {
       state.prop_info = info
     },

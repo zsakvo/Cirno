@@ -5,12 +5,17 @@ axios.defaults.baseUrl = ''
 
 let vm = null
 
-const mixin = {
-  baseUrl: process.env.VUE_APP_SERVER_URL, //url前缀
-  loadingFlag: true,
-  header: { 'Content-Type': ' application/json' },
+let mixin = {
+  headers: {
+    'Content-Type': 'application/json;charset-utf-8'
+    // 'User-Agent': 'Android  com.kuangxiangciweimao.novel  fake_server_by_scf'
+  },
   timeout: 30000,
-  withCredentials: true //跨域请求是否使用凭证
+  withCredentials: true, //跨域请求是否使用凭证
+  urlParas: {
+    app_version: '2.5.016',
+    device_token: 'ciweimao_scf_server'
+  }
 }
 // http request 拦截
 axios.interceptors.request.use(
@@ -21,88 +26,43 @@ axios.interceptors.request.use(
     return Promise.reject(error)
   }
 )
-// http response 拦截器
-axios.interceptors.response.use(
-  response => {
-    return response
-  },
-  error => {
-    if (error && error.response) {
-      switch (error.response.status) {
-        case 400:
-          error.message = '请求错误'
-          break
-        case 401:
-          error.message = '未授权，请登录'
-          break
-        case 403:
-          error.message = '拒绝访问'
-          break
-        case 404:
-          error.message = '请求地址出错'
-          break
-        case 408:
-          error.message = '请求超时'
-          break
-        case 500:
-          error.message = '服务器内部错误'
-          break
-        case 501:
-          error.message = '服务未实现'
-          break
-        case 502:
-          error.message = '网关错误'
-          break
-        case 503:
-          error.message = '服务不可用'
-          break
-        case 504:
-          error.message = '网关超时'
-          break
-        case 505:
-          error.message = 'HTTP版本不受支持'
-          break
-        default:
-      }
-    }
-    return Promise.reject(error)
-  }
-)
-
 /**
  * 封装get方法
  * @param optioons
  */
 
 function get(obj) {
-  let options = mixin
-  options = Object.assign({}, options, obj)
-  let url = options.baseUrl + options.url
+  let urlParas = Object.assign({}, mixin.urlParas, obj.urlParas, {
+    login_token: window.localStorage.getItem('login_token'),
+    account: window.localStorage.getItem('account')
+  })
+  let headers = Object.assign({}, mixin.headers, obj.headers)
+  let url = window.localStorage.getItem('baseUrl') + obj.url
 
   return new Promise((resolve, reject) => {
     axios
       .get(url, {
-        headers: options.header,
-        params: options.urlParas,
-        timeout: options.timeout,
-        withCredentials: options.withCredentials
+        headers: headers,
+        params: urlParas,
+        timeout: mixin.timeout,
+        withCredentials: mixin.withCredentials
       })
       .then(response => {
-        let data = response.data
-        if (!data.failed) {
-          if (data.success) {
-            resolve(data)
-          } else {
-            vm.prototype.$message.error(data.tip)
-            reject(data)
-          }
+        let res = response.data
+        //有些接口回来的数据比较奇葩……
+        if (typeof res === 'string') {
+          res = eval('(' + res + ')')
+        }
+        if (res['code'] == 100000) {
+          resolve(res)
         } else {
-          //请求失败了……
+          reject(res)
         }
       })
       .catch(err => {
+        console.log(err)
         //请求出错了……
-        vm.prototype.$message.error(err.message)
+        // vm.prototype.$message.error(err.message)
         reject(err)
       })
   })

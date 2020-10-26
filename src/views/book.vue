@@ -61,7 +61,7 @@
               <div class="tsukkomi-options">
                 <div
                   class="option-button"
-                  :class="{ 'like-selected': tsukkomi.is_like }"
+                  :class="{ 'like-selected': tsukkomi.is_like !== '0' }"
                   @click="tsukkomiOperate(0, tsukkomi.tsukkomi_id)"
                 >
                   <i class="ri-thumb-up-line"></i>
@@ -69,7 +69,7 @@
                 </div>
                 <div
                   class="option-button"
-                  :class="{ 'unlike-selected': tsukkomi.is_unlike }"
+                  :class="{ 'unlike-selected': tsukkomi.is_unlike !== '0' }"
                   @click="tsukkomiOperate(1, tsukkomi.tsukkomi_id)"
                 >
                   <i class="ri-thumb-down-line"></i>
@@ -139,6 +139,7 @@
 </template>
 
 <script>
+import crypto from 'crypto'
 import { mapState } from 'vuex'
 import PerfectScrollbar from 'perfect-scrollbar'
 import 'perfect-scrollbar/css/perfect-scrollbar.css'
@@ -189,19 +190,46 @@ export default {
     this.bid = this.$route.query.bid
     this.cid = this.$route.query.cid
     let book_info = await this.$get({
-      url: '/book_info',
+      url: '/book/get_info_by_id',
       urlParas: {
         book_id: this.bid
       }
     })
+    console.log(book_info)
+    let that = this
+    // let division_chapters = async function(division_id) {
+    //   let res = await that.$get({
+    //     url: '/chapter/get_updated_chapter_by_division_id',
+    //     urlParas: {
+    //       division_id: division_id,
+    //       last_update_time: 0
+    //     }
+    //   })
+    //   return res
+    // }
     this.book_info = book_info.data.book_info
     let book_chapters = await this.$get({
-      url: '/book_chapters',
+      url: '/book/get_division_list',
       urlParas: {
         book_id: this.bid
       }
+    }).then(async res => {
+      let chapters = []
+      let division_list = res.data.division_list
+      for (let division of division_list) {
+        let division_id = division['division_id']
+        let chapters_res = await this.$get({
+          url: '/chapter/get_updated_chapter_by_division_id',
+          urlParas: {
+            division_id: division_id,
+            last_update_time: 0
+          }
+        })
+        chapters.push(...chapters_res.data.chapter_list)
+      }
+      return chapters
     })
-    this.book_chapters = book_chapters.data
+    this.book_chapters = book_chapters
     this.book_chapterids = this.book_chapters.map(chapter => {
       return chapter['chapter_id']
     })
@@ -233,14 +261,24 @@ export default {
       this.cid = cid
       this.loading = 0
       this.chapterIndex = this.book_chapterids.indexOf(cid)
-      let chapter_info = await this.$get({
-        url: '/chapter_ifm',
+      let keyRes = await this.$get({
+        url: '/chapter/get_chapter_cmd',
         urlParas: {
           chapter_id: cid
         }
       })
+      let key = keyRes.data.command
+      let chapter_info = await this.$get({
+        url: '/chapter/get_cpt_ifm',
+        urlParas: {
+          chapter_id: cid,
+          chapter_command: key
+        }
+      })
+      chapter_info.data.chapter_info.txt_content = this.decrypt(chapter_info.data.chapter_info.txt_content, key)
       this.chapter_info = chapter_info.data.chapter_info
-      if (this.chapter_info.auth_access === '1') {
+      console.log(this.chapter_info)
+      if (this.chapter_info.auth_access == 1) {
         this.auth = true
         this.setLastRead()
       } else {
@@ -275,10 +313,27 @@ export default {
         })
       })
     },
+    decrypt(data, key) {
+      if (key == null) {
+        key = crypto
+          .createHash('sha256')
+          .update('zG2nSeEfSHfvTCHy5LCcqtBbQehKNLXn')
+          .digest()
+      } else {
+        key = crypto
+          .createHash('sha256')
+          .update(key)
+          .digest()
+      }
+      let decipher = crypto.createDecipheriv('aes-256-cbc', key, new Uint8Array(16))
+      decipher.setAutoPadding(false)
+      let decrypted = decipher.update(data, 'base64', 'utf8')
+      return decrypted
+    },
     async getTsukkomiNum(cid) {
       typeof cid === 'string' ? null : (cid = `${cid}`)
       let tsukkomi_num_info = await this.$get({
-        url: '/tsukkomi_num',
+        url: '/chapter/get_tsukkomi_num',
         urlParas: {
           chapter_id: cid
         }
@@ -287,10 +342,11 @@ export default {
     },
     async getTsukkomiList(paragraph_index) {
       let tsukkomi_list = await this.$get({
-        url: '/tsukkomi_list',
+        url: '/chapter/get_paragraph_tsukkomi_list_new',
         urlParas: {
           chapter_id: this.cid,
           paragraph_index: paragraph_index,
+          count: 20,
           page: this.tsukkomiPage - 1
         }
       })
@@ -365,9 +421,9 @@ export default {
     async tsukkomiOperate(unlike, tsukkomi_id) {
       let url = ''
       if (unlike) {
-        url = '/unlike_tsukkomi'
+        url = '/chapter/unlike_tsukkomi'
       } else {
-        url = '/like_tsukkomi'
+        url = '/chapter/like_tsukkomi'
       }
       let result = await this.$get({
         url: url,
@@ -409,10 +465,10 @@ export default {
     },
     setLastRead() {
       this.$get({
-        url: '/set_last_read',
+        url: '/bookshelf/set_last_read_chapter',
         urlParas: {
           book_id: this.bid,
-          chapter_id: this.cid
+          last_read_chapter_id: this.cid
         }
       })
     },

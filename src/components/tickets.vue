@@ -59,7 +59,7 @@ export default {
     post() {
       this.confirmLoading = true
       this.$get({
-        url: '/give_recommend',
+        url: '/book/give_recommend',
         urlParas: {
           book_id: this.bid,
           count: this.recommandNum
