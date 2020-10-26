@@ -12,7 +12,7 @@ export default {
   },
   components: {},
   created() {
-    this.getInfo()
+    // this.getInfo()
   },
   methods: {
     getInfo() {
