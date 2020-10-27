@@ -1,9 +1,28 @@
 import axios from 'axios'
+import crypto from 'crypto'
 
 axios.defaults.timeout = 1500
 axios.defaults.baseUrl = ''
 
 let vm = null
+
+function decrypt(data, key) {
+  if (key == null) {
+    key = crypto
+      .createHash('sha256')
+      .update('zG2nSeEfSHfvTCHy5LCcqtBbQehKNLXn')
+      .digest()
+  } else {
+    key = crypto
+      .createHash('sha256')
+      .update(key)
+      .digest()
+  }
+  let decipher = crypto.createDecipheriv('aes-256-cbc', key, new Uint8Array(16))
+  decipher.setAutoPadding(false)
+  let decrypted = decipher.update(data, 'base64', 'utf8')
+  return decrypted
+}
 
 let mixin = {
   headers: {
@@ -37,7 +56,8 @@ function get(obj) {
     account: window.localStorage.getItem('account')
   })
   let headers = Object.assign({}, mixin.headers, obj.headers)
-  let url = window.localStorage.getItem('baseUrl') + obj.url
+  var baseUrl = window.localStorage.getItem('baseUrl')
+  let url = baseUrl + obj.url
 
   return new Promise((resolve, reject) => {
     axios
@@ -49,8 +69,14 @@ function get(obj) {
       })
       .then(response => {
         let res = response.data
-        //有些接口回来的数据比较奇葩……
+        if (baseUrl.indexOf('app.hbooker.com') != -1) {
+          res = decrypt(res)
+          res = unescape(res.replace(/\\u/g, '%u'))
+          let regExp = /\{(.+)\}/g
+          res = res.match(regExp)[0]
+        }
         if (typeof res === 'string') {
+          //有些接口回来的数据比较奇葩……
           res = eval('(' + res + ')')
         }
         if (res['code'] == 100000) {
