@@ -6,7 +6,7 @@
         <div class="decoration"></div>
       </div>
       <div class="options">
-        <div class="change-shelf option-icon">
+        <div class="change-shelf option-icon" @click="changeShelf">
           <i class="ri-loader-4-line"></i>
         </div>
         <div class="change-shelf option-icon" @click="beginCheckIn(checkIn)">
@@ -30,6 +30,19 @@
       </div>
     </div>
     <!-- <div class="bottom-bar"></div> -->
+    <a-modal
+      :footer="null"
+      title="切换书架"
+      :closable="false"
+      v-model="shelfModal"
+      centered
+      @ok="() => (shelfModal = false)"
+      class="shelf-modal"
+    >
+      <p>some contents...</p>
+      <p>some contents...</p>
+      <p>some contents...</p>
+    </a-modal>
   </div>
 </template>
 
@@ -40,7 +53,8 @@ export default {
       book_list: [],
       currentShelfId: 0,
       avatar: this.$store.state.reader_info.avatar_thumb_url,
-      checkIn: false
+      checkIn: false,
+      shelfModal: false
     }
   },
   created() {
@@ -113,6 +127,9 @@ export default {
         })
       }
     },
+    changeShelf() {
+      this.shelfModal = true
+    },
     async getBooks() {
       let book_list = await this.$get({
         url: '/bookshelf/get_shelf_book_list_new',
@@ -171,6 +188,7 @@ export default {
       }
       .option-icon {
         font-size: 24px;
+        cursor: pointer;
       }
     }
   }
@@ -213,6 +231,16 @@ export default {
     bottom: 0;
     background: #fff;
     z-index: 20;
+  }
+
+  .shelf-modal {
+    background: forestgreen;
+    ::v-deep .ant-modal-content {
+      background: forestgreen;
+      .ant-modal-header {
+        border-bottom: 0;
+      }
+    }
   }
 }
 </style>
