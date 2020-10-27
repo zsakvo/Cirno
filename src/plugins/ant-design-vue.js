@@ -13,7 +13,8 @@ import {
   InputNumber,
   Checkbox,
   Popover,
-  Dropdown
+  Dropdown,
+  Spin
 } from 'ant-design-vue'
 Vue.use(Pagination)
 Vue.use(Button)
@@ -30,4 +31,5 @@ Vue.use(InputNumber)
 Vue.use(Checkbox)
 Vue.use(Popover)
 Vue.use(Dropdown)
+Vue.use(Spin)
 Vue.prototype.$message = message

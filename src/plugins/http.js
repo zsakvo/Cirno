@@ -56,13 +56,13 @@ function get(obj) {
         if (res['code'] == 100000) {
           resolve(res)
         } else {
-          reject(res)
+          vm.prototype.$message.error(res.tip)
         }
       })
       .catch(err => {
         console.log(err)
         //请求出错了……
-        // vm.prototype.$message.error(err.message)
+        //
         reject(err)
       })
   })

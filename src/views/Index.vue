@@ -6,7 +6,7 @@
         <div class="decoration"></div>
       </div>
       <div class="options">
-        <div class="change-shelf option-icon" @click="changeShelf">
+        <div class="change-shelf option-icon" @click="openShelfModal">
           <i class="ri-loader-4-line"></i>
         </div>
         <div class="change-shelf option-icon" @click="beginCheckIn(checkIn)">
@@ -21,12 +21,24 @@
         <!-- <img class="avatar" :src="avatar ? avatar : require('@/assets/d_avatar.jpg')" alt="用户头像" /> -->
       </div>
     </div>
-    <div class="books-wrapper">
+    <a-spin size="large" v-if="loadStatus === 0" />
+    <div class="books-wrapper" v-else-if="loadStatus === 1">
       <div class="books">
         <div class="book" v-for="book in book_list" :key="book.id" @click="gotoBook(book)">
           <img class="book-cover" :src="book.book_info.cover" />
           <div class="book-name">{{ book.book_info.book_name }}</div>
         </div>
+      </div>
+    </div>
+    <div class="err-wrapper" v-else>
+      <div class="err-title">
+        获取数据失败，原因可能是与后端 api 通信出错，您可以尝试
+        <font class="clickable" color="#ff4d4f" @click="refreshPage">刷新</font>
+        或者
+        <font class="clickable" color="#ff4d4f">设置 api-host</font>
+      </div>
+      <div class="err-text">
+        {{ errText }}
       </div>
     </div>
     <!-- <div class="bottom-bar"></div> -->
@@ -39,9 +51,11 @@
       @ok="() => (shelfModal = false)"
       class="shelf-modal"
     >
-      <p>some contents...</p>
-      <p>some contents...</p>
-      <p>some contents...</p>
+      <div class="shelf-wrapper">
+        <div class="shelf" v-for="shelf in shelves" :key="shelf.shelf_id" @click="changeShelf(shelf.shelf_id)">
+          {{ shelf.shelf_name }}
+        </div>
+      </div>
     </a-modal>
   </div>
 </template>
@@ -50,49 +64,55 @@
 export default {
   data() {
     return {
+      shelves: [],
       book_list: [],
-      currentShelfId: 0,
+      currentShelfId: null,
       avatar: this.$store.state.reader_info.avatar_thumb_url,
       checkIn: false,
-      shelfModal: false
+      shelfModal: false,
+      loadStatus: 0,
+      errText: ''
     }
   },
-  created() {
-    this.getInfo()
-    this.isCheckIn()
-    this.$get({
-      url: '/bookshelf/get_shelf_list',
-      urlParas: {}
-    }).then(
-      res => {
-        this.hbooker_shelves = res.data.shelf_list
-        this.currentShelfId = this.hbooker_shelves[0].shelf_id
-        this.getBooks()
-      },
-      err => {}
-    )
+  async created() {
+    let info = await this.getInfo()
+    if (info) {
+      this.refreshBooks()
+    }
   },
   computed: {},
   methods: {
-    getInfo() {
-      this.$get({
+    async refreshBooks() {
+      this.isCheckIn()
+      let shelves = await this.getShelves()
+      if (shelves === null) {
+        this.loadStatus = -1
+      } else {
+        this.shelves = shelves
+        this.currentShelfId === null ? (this.currentShelfId = this.shelves[0]['shelf_id']) : null
+        this.getBooks()
+      }
+    },
+    refreshPage() {
+      this.loadStatus = 0
+      this.currentShelfId = null
+      this.shelves = []
+      this.refreshBooks()
+    },
+    async getInfo() {
+      return this.$get({
         url: '/reader/get_my_info'
       }).then(
         async res => {
           this.avatar = res.data.reader_info.avatar_thumb_url
           this.$store.commit('setPropInfo', res.data.prop_info)
           this.$store.commit('setReaderInfo', res.data.reader_info)
+          return true
         },
         err => {
-          console.log(err)
-          switch (err.code) {
-            case 200001:
-              //需要登入
-              this.$router.push({
-                name: 'Login'
-              })
-              break
-          }
+          this.loadStatus = -1
+          this.errText = err
+          return false
         }
       )
     },
@@ -106,7 +126,6 @@ export default {
       let today = date.getDay()
       let dayArr = [6, 0, 1, 2, 3, 4, 5]
       this.checkIn = sign_record_list[dayArr[today]]['is_signed'] === '1'
-      console.log(this.checkIn)
     },
     async beginCheckIn(checkIn) {
       if (checkIn) {
@@ -127,11 +146,37 @@ export default {
         })
       }
     },
-    changeShelf() {
+    openShelfModal() {
       this.shelfModal = true
     },
+    changeShelf(id) {
+      this.shelfModal = false
+      if (id === this.currentShelfId) {
+        // this.$refs.booksContainer.scrollTo(0, 0)
+      } else {
+        // this.loadingBooks = 0
+        this.currentShelfId = id
+        this.getBooks()
+      }
+    },
+    async getShelves() {
+      return this.$get({
+        url: '/bookshelf/get_shelf_list',
+        urlParas: {}
+      }).then(
+        res => {
+          console.log(res.data.shelf_list)
+          return res.data.shelf_list
+        },
+        err => {
+          this.loadStatus = -1
+          this.errText = err
+          return null
+        }
+      )
+    },
     async getBooks() {
-      let book_list = await this.$get({
+      this.$get({
         url: '/bookshelf/get_shelf_book_list_new',
         urlParas: {
           shelf_id: this.currentShelfId,
@@ -139,8 +184,18 @@ export default {
           page: 0,
           order: 'last_read_time'
         }
-      })
-      this.book_list = book_list.data.book_list
+      }).then(
+        res => {
+          this.book_list = res.data.book_list
+          this.$nextTick(() => {
+            this.loadStatus = 1
+          })
+        },
+        err => {
+          this.loadStatus = -1
+          this.errText = err
+        }
+      )
     },
     gotoBook(book) {
       this.$router.push({
@@ -193,6 +248,33 @@ export default {
     }
   }
 
+  .ant-spin {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+  }
+
+  .err-wrapper {
+    width: 100%;
+    padding-top: 120px;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+    .err-title {
+      color: #8c8c8c;
+      font-size: 16px;
+      font-weight: 500;
+      user-select: none;
+      .clickable {
+        cursor: pointer;
+      }
+    }
+    .err-text {
+      border-left: 5px solid #ff7875;
+      padding-left: 12px;
+      margin-top: 32px;
+      color: #8c8c8c;
+    }
+  }
+
   .books-wrapper {
     padding-top: 120px;
     position: absolute;
@@ -232,14 +314,23 @@ export default {
     background: #fff;
     z-index: 20;
   }
+}
 
-  .shelf-modal {
-    background: forestgreen;
-    ::v-deep .ant-modal-content {
-      background: forestgreen;
-      .ant-modal-header {
-        border-bottom: 0;
-      }
+::v-deep .ant-modal-content {
+  .ant-modal-header {
+    border-bottom: 0;
+    user-select: none;
+  }
+  .ant-modal-body {
+    padding: 0px 24px 16px 24px;
+  }
+  .shelf-wrapper {
+    display: flex;
+    flex-direction: column;
+    .shelf {
+      font-size: 14px;
+      padding: 8px 0;
+      cursor: pointer;
     }
   }
 }

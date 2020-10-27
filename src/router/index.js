@@ -4,11 +4,11 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'Shelf',
-    component: () => import('../views/Shelf.vue')
-  },
+  // {
+  //   path: '/',
+  //   name: 'Shelf',
+  //   component: () => import('../views/Shelf.vue')
+  // },
   {
     path: '/book',
     name: 'Book',
@@ -25,7 +25,7 @@ const routes = [
     component: () => import('../views/Settings.vue')
   },
   {
-    path: '/index',
+    path: '/',
     name: 'Index',
     component: () => import('../views/Index.vue')
   },
