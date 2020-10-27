@@ -1,0 +1,19 @@
+component: koa
+name: Cirno
+inputs:
+  functionName: cirno
+  functionConf:
+    timeout: 30
+    memorySize: 64
+  src:
+    src: ./
+    exclude:
+      - .env
+  region: ap-guangzhou
+  runtime: Nodejs12.16
+  apigatewayConf:
+    protocols:
+      - http
+      - https
+    environment: release
+    enableCORS: true
