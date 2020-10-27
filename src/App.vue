@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <keep-alive include="Shelf">
-      <router-view />
-    </keep-alive>
+    <!-- <keep-alive include="Shelf"> -->
+    <router-view />
+    <!-- </keep-alive> -->
   </div>
 </template>
 

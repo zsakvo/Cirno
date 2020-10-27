@@ -189,24 +189,15 @@ export default {
   async created() {
     this.bid = this.$route.query.bid
     this.cid = this.$route.query.cid
+    if (this.cid != 0) {
+      this.getContent(this.cid)
+    }
     let book_info = await this.$get({
       url: '/book/get_info_by_id',
       urlParas: {
         book_id: this.bid
       }
     })
-    console.log(book_info)
-    let that = this
-    // let division_chapters = async function(division_id) {
-    //   let res = await that.$get({
-    //     url: '/chapter/get_updated_chapter_by_division_id',
-    //     urlParas: {
-    //       division_id: division_id,
-    //       last_update_time: 0
-    //     }
-    //   })
-    //   return res
-    // }
     this.book_info = book_info.data.book_info
     let book_chapters = await this.$get({
       url: '/book/get_division_list',
@@ -216,6 +207,7 @@ export default {
     }).then(async res => {
       let chapters = []
       let division_list = res.data.division_list
+      let i = 0
       for (let division of division_list) {
         let division_id = division['division_id']
         let chapters_res = await this.$get({
@@ -225,7 +217,13 @@ export default {
             last_update_time: 0
           }
         })
+        if (i === 0 && this.cid == 0) {
+          this.cid = chapters_res.data.chapter_list[0]
+          this.$router.replace({ query: { bid: this.bid, cid: this.cid } })
+          this.getContent(this.cid)
+        }
         chapters.push(...chapters_res.data.chapter_list)
+        i++
       }
       return chapters
     })
@@ -233,11 +231,10 @@ export default {
     this.book_chapterids = this.book_chapters.map(chapter => {
       return chapter['chapter_id']
     })
-    if (this.cid == 0) {
-      this.cid = this.book_chapterids[0]
-      this.$router.replace({ query: { bid: this.bid, cid: this.cid } })
-    }
-    this.getContent(this.cid)
+    // if (this.cid == 0) {
+    //   this.cid = this.book_chapterids[0]
+    //   this.$router.replace({ query: { bid: this.bid, cid: this.cid } })
+    // }
   },
   mounted() {
     this.contentDiv = this.$refs.contentContainer
