@@ -62,6 +62,12 @@ scf:
 其中 `url` 字段追加 `api` 即为需要的 api-host（例如 https://xxxxxxx.gz.apigw.tencentcs.com/release/api）
 填入前端设置框，验证通过后登陆账号即可开始使用。
 
+---
+
+### 方案二
+
+无须部署后端函数，直接在 api-host 内填入 https://app.hbooker.com （此为官方接口地址，请放心使用），然后为你的浏览器开启跨域访问（插件或者追加启动参数均可），登陆即可直接使用。相对而言，此方案加载速度更快，也更简便些。
+
 ## 截图
 
 ![](./imgs/5.jpg)

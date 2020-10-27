@@ -60,7 +60,7 @@
               <div class="tsukkomi-options">
                 <div
                   class="option-button"
-                  :class="{ 'like-selected': tsukkomi.is_like !== '0' }"
+                  :class="{ 'like-selected': tsukkomi.is_like + '' !== '0' }"
                   @click="tsukkomiOperate(0, tsukkomi.tsukkomi_id)"
                 >
                   <i class="ri-thumb-up-line"></i>
@@ -68,7 +68,7 @@
                 </div>
                 <div
                   class="option-button"
-                  :class="{ 'unlike-selected': tsukkomi.is_unlike !== '0' }"
+                  :class="{ 'unlike-selected': tsukkomi.is_unlike + '' !== '0' }"
                   @click="tsukkomiOperate(1, tsukkomi.tsukkomi_id)"
                 >
                   <i class="ri-thumb-down-line"></i>

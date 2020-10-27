@@ -56,7 +56,7 @@ function get(obj) {
     account: window.localStorage.getItem('account')
   })
   let headers = Object.assign({}, mixin.headers, obj.headers)
-  var baseUrl = window.localStorage.getItem('baseUrl')
+  let baseUrl = window.localStorage.getItem('baseUrl')
   let url = baseUrl + obj.url
 
   return new Promise((resolve, reject) => {
