@@ -5,7 +5,10 @@
     </div>
     <div class="side-box">
       <div class="login-box">
-        <div class="title">刺猬猫账户登录</div>
+        <div class="title">
+          <i class="ri-arrow-left-line icon" @click="goBack"></i>
+          <div>刺猬猫账户登录</div>
+        </div>
         <div class="input-box">
           <div class="user-name input">
             <a-input ref="userNameInput" size="large" v-model="userName" placeholder="手机号/邮箱">
@@ -52,6 +55,9 @@ export default {
     }
   },
   methods: {
+    goBack() {
+      this.$router.back()
+    },
     login() {
       this.confirmLoading = true
       let login_res = this.$get({
@@ -77,7 +83,8 @@ export default {
           this.$emit('getInfo')
           this.confirmLoading = false
           this.$router.push({
-            name: 'Shelf'
+            name: 'Index',
+            params: { forceReload: true }
           })
         },
         err => {
@@ -118,6 +125,13 @@ export default {
       width: 36vw;
       min-width: 412px;
       .title {
+        display: flex;
+        align-items: center;
+        .icon {
+          cursor: pointer;
+          line-height: 24px;
+          margin-right: 12px;
+        }
         font-weight: 600;
         font-size: 24px;
         margin: 24px 0;

@@ -56,7 +56,11 @@ function get(obj) {
         if (res['code'] == 100000) {
           resolve(res)
         } else {
-          vm.prototype.$message.error(res.tip)
+          if (url.indexOf('get_meta_data') != -1) {
+            resolve(res)
+          } else {
+            vm.prototype.$message.error(res.tip)
+          }
         }
       })
       .catch(err => {

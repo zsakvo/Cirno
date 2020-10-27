@@ -15,7 +15,7 @@
         <div class="change-shelf option-icon">
           <i class="ri-search-2-line"></i>
         </div>
-        <div class="change-shelf option-icon">
+        <div class="change-shelf option-icon" @click="gotoSettings">
           <i class="ri-settings-line"></i>
         </div>
         <!-- <img class="avatar" :src="avatar ? avatar : require('@/assets/d_avatar.jpg')" alt="用户头像" /> -->
@@ -35,7 +35,7 @@
         获取数据失败，原因可能是与后端 api 通信出错，您可以尝试
         <font class="clickable" color="#ff4d4f" @click="refreshPage">刷新</font>
         或者
-        <font class="clickable" color="#ff4d4f">设置 api-host</font>
+        <font class="clickable" color="#ff4d4f" @click="gotoSettings">设置 api-host</font>
       </div>
       <div class="err-text">
         {{ errText }}
@@ -75,6 +75,9 @@ export default {
     }
   },
   async created() {
+    // if (this.$route.params.forceReload) {
+    //   this.$router.go(0)
+    // }
     let info = await this.getInfo()
     if (info) {
       this.refreshBooks()
@@ -205,6 +208,9 @@ export default {
           cid: book.last_read_chapter_id
         }
       })
+    },
+    gotoSettings() {
+      this.$router.push({ name: 'Settings' })
     }
   }
 }

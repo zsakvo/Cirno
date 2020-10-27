@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view @getInfo="getInfo" />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
   </div>
 </template>
 
@@ -12,34 +14,13 @@ export default {
   },
   components: {},
   created() {
-    // this.getInfo()
-  },
-  methods: {
-    getInfo() {
-      this.$get({
-        url: '/reader/get_my_info'
-      }).then(
-        async res => {
-          let my_info = res
-          console.log('----')
-          console.log(my_info)
-          this.$store.commit('setPropInfo', my_info.data.prop_info)
-          this.$store.commit('setReaderInfo', my_info.data.reader_info)
-        },
-        err => {
-          console.log(err)
-          switch (err.code) {
-            case 200001:
-              //需要登入
-              this.$router.push({
-                name: 'Login'
-              })
-              break
-          }
-        }
-      )
+    if (!localStorage.getItem('baseUrl')) {
+      this.$router.push({
+        name: 'Settings'
+      })
     }
-  }
+  },
+  methods: {}
 }
 </script>
 
