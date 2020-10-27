@@ -23,15 +23,9 @@ function handleBuffer(oriBuffer) {
 
 function decrypt(data, key) {
   if (key == null) {
-    key = crypto
-      .createHash('sha256')
-      .update('zG2nSeEfSHfvTCHy5LCcqtBbQehKNLXn')
-      .digest()
+    key = crypto.createHash('sha256').update('zG2nSeEfSHfvTCHy5LCcqtBbQehKNLXn').digest()
   } else {
-    key = crypto
-      .createHash('sha256')
-      .update(key)
-      .digest()
+    key = crypto.createHash('sha256').update(key).digest()
   }
   let decipher = crypto.createDecipheriv('aes-256-cbc', key, new Uint8Array(16))
   decipher.setAutoPadding(false)
@@ -51,7 +45,7 @@ app.use(
       'Origin,X-Api-ID,X-Service-RateLimit,X-UsagePlan-RateLimit,X-UsagePlan-Quota,Cache-Control,Connection,Content-Disposition,Date,Keep-Alive,Pragma,Via,Accept,Accept-Charset,Accept-Encoding,Accept-Language,Authorization,Cookie,Expect,From,Host,If-Match,If-Modified-Since,If-None-Match,If-Range,If-Unmodified-Since,Range,Origin,Referer,User-Agent,X-Forwarded-For,X-Forwarded-Host,X-Forwarded-Proto,Accept-Range,Age,Content-Range,Content-Security-Policy,ETag,Expires,Last-Modified,Location,Server,Set-Cookie,Trailer,Transfer-Encoding,Vary,Allow,Content-Encoding,Content-Language,Content-Length,Content-Location,Content-Type',
     credentials: true,
     allowMethods: ['GET', 'POST', 'DELETE'],
-    allowHeaders: ['Content-Type', 'Authorization', 'Accept']
+    allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
   })
 )
 
@@ -95,9 +89,9 @@ router.get(`/api/*`, async (ctx, next) => {
             oriWriteHead.apply(res, [200, headers])
             oriWrite.call(res, buffer)
             oriEnd.call(res)
-          }
+          },
         })
-      }
+      },
     })
   )(ctx, next)
   await next()
