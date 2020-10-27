@@ -62,6 +62,7 @@
 
 <script>
 export default {
+  name: 'Shelf',
   data() {
     return {
       shelves: [],

@@ -148,6 +148,7 @@ import Picture from '../components/picture.vue'
 import Tsukkomi from '../components/tsukkomi.vue'
 import Tickets from '../components/tickets.vue'
 export default {
+  name: 'Reader',
   components: {
     Paragraph,
     Catalog,

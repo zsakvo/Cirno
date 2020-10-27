@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive exclude="Book">
+    <keep-alive include="Shelf">
       <router-view />
     </keep-alive>
   </div>
