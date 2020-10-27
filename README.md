@@ -27,7 +27,40 @@ Cirno 是一个第三方的刺猬猫（欢乐书客）小说阅读器。
 - 投推荐票
 - ......
 
-> 以上功能均需要搭配 [Cirno-Server](https://github.com/zsakvo/Cirno-Server) 实现，本项目仅负责前端相关功能，具体的 app 接口请求以及数据解密包装等均由对应的后端服务实现，且该服务只起到对官方 App 接口进行包装转发的作用，不会上传您的任何个人信息。
+> ~~以上功能均需要搭配 [Cirno-Server](https://github.com/zsakvo/Cirno-Server) 实现，本项目仅负责前端相关功能，具体的 app 接口请求以及数据解密包装等均由对应的后端服务实现，且该服务只起到对官方 App 接口进行包装转发的作用，不会上传您的任何个人信息。~~
+
+## 运行方式：
+
+线上 demo：[Cirno](https://zsakvo.github.io/Cirno/#/)，具体使用参照以下指导。
+
+经过改版，本程序不再需要本地运行后端服务，取而代之的是利用腾讯云 scf（无服务函数）来对接口进行转发和解密。若要使用，请自行申请腾讯云账户，并且开通 scf 相关功能，然后拉取代码后执行命令
+
+```shell
+npm install serverless -g
+cd scf
+yarn
+sls deploy
+```
+
+按照提示扫码完成验证，等待部署完毕，终端会打印如下信息
+
+```
+region: ap-guangzhou
+apigw:
+  serviceId:   xxxxxxx
+  subDomain:   xxxxxxx.gz.apigw.tencentcs.com
+  environment: release
+  url:         https://xxxxxxx.gz.apigw.tencentcs.com/release/
+scf:
+  functionName: cirno
+  runtime:      Nodejs12.16
+  namespace:    default
+  lastVersion:  $LATEST
+  traffic:      1
+```
+
+其中 `url` 字段追加 `api` 即为需要的 api-host（例如 https://xxxxxxx.gz.apigw.tencentcs.com/release/api）
+填入前端设置框，验证通过后登陆账号即可开始使用。
 
 ## 截图
 
