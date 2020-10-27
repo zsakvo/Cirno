@@ -12,7 +12,7 @@ const routes = [
   {
     path: '/book',
     name: 'Book',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Book.vue')
+    component: () => import('../views/Reader.vue')
   },
   {
     path: '/login',
