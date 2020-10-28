@@ -57,7 +57,7 @@ function get(obj) {
   })
   let headers = Object.assign({}, mixin.headers, obj.headers)
   let baseUrl = window.localStorage.getItem('baseUrl')
-  let url = baseUrl + obj.url
+  let url = baseUrl ? baseUrl + obj.url : 'https://app.hbooker.com' + obj.url
 
   return new Promise((resolve, reject) => {
     axios

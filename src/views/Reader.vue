@@ -3,7 +3,7 @@
     <div class="content-container" ref="contentContainer">
       <div v-show="loading === 1" class="book-content" ref="bookContent">
         <div class="top-bar">
-          <i class="ri-bookmark-fill icon-button"></i>
+          <i class="ri-arrow-left-line icon-button" @click="goBack"></i>
           <div class="topbar-title">{{ chapterTitle }}</div>
         </div>
         <paragraph
@@ -231,6 +231,7 @@ export default {
     this.book_chapterids = this.book_chapters.map(chapter => {
       return chapter['chapter_id']
     })
+    this.chapterIndex = this.book_chapterids.indexOf(this.cid)
     // if (this.cid == 0) {
     //   this.cid = this.book_chapterids[0]
     //   this.$router.replace({ query: { bid: this.bid, cid: this.cid } })
@@ -474,6 +475,9 @@ export default {
     },
     noAccess() {
       this.$message.info('此功能尚未开放')
+    },
+    goBack() {
+      this.$router.back()
     }
   }
 }
@@ -514,6 +518,7 @@ export default {
         .icon-button {
           font-size: 24px;
           margin-left: 32px;
+          cursor: pointer;
         }
         .topbar-title {
           color: #0d141e;

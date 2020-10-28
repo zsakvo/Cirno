@@ -76,14 +76,17 @@ export default {
     }
   },
   async created() {
-    // if (this.$route.params.forceReload) {
-    //   this.$router.go(0)
-    // }
+    console.log('----')
+    console.log(this.$route.params.forceReload)
+    if (this.$route.params.forceReload) {
+      this.refreshBooks()
+    }
     let info = await this.getInfo()
     if (info) {
       this.refreshBooks()
     }
   },
+  mounted() {},
   computed: {},
   methods: {
     async refreshBooks() {

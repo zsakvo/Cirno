@@ -41,14 +41,14 @@ export default {
     return {
       isLogin: false,
       apiModal: false,
-      apiUrl: '',
+      apiUrl: null,
       confirmLoading: false,
       checkFailed: false,
       account: null
     }
   },
   async created() {
-    this.apiUrl = localStorage.getItem('baseUrl')
+    this.apiUrl = localStorage.getItem('baseUrl') ? localStorage.getItem('baseUrl') : 'https://app.hbooker.com'
     this.account = localStorage.getItem('account')
   },
   computed: {},
