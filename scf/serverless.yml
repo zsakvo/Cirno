@@ -9,7 +9,7 @@ inputs:
     src: ./
     exclude:
       - .env
-  region: ap-guangzhou
+  region: ap-shanghai
   runtime: Nodejs12.16
   apigatewayConf:
     protocols:
