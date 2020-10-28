@@ -17,5 +17,19 @@ module.exports = {
         }
       }
     }
+  },
+  pwa: {
+    // 一些基础配置
+    name: 'Cirno',
+    themeColor: '#096dd9',
+    msTileColor: '#000000',
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'black',
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      // 自定义的 service worker 文件的位置
+      swSrc: 'src/service-worker.js'
+      // ...other Workbox options...
+    }
   }
 }
