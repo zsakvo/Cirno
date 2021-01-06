@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "ant-design-vue": "^1.2.4",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "perfect-scrollbar": "^1.5.0",
     "register-service-worker": "^1.7.1",
