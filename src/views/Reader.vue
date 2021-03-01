@@ -218,7 +218,7 @@ export default {
           }
         })
         if (i === 0 && this.cid == 0) {
-          this.cid = chapters_res.data.chapter_list[0]
+          this.cid = chapters_res.data.chapter_list[0].chapter_id
           this.$router.replace({ query: { bid: this.bid, cid: this.cid } })
           this.getContent(this.cid)
         }
