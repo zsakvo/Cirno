@@ -12,7 +12,7 @@
         <div class="change-shelf option-icon" @click="beginCheckIn(checkIn)">
           <i :class="{ 'ri-calendar-check-line': checkIn, 'ri-calendar-line': !checkIn }"></i>
         </div>
-        <div class="change-shelf option-icon">
+        <div class="change-shelf option-icon" @click="gotoSearch">
           <i class="ri-search-2-line"></i>
         </div>
         <div class="change-shelf option-icon" @click="gotoSettings">
@@ -212,6 +212,9 @@ export default {
           cid: book.last_read_chapter_id
         }
       })
+    },
+    gotoSearch() {
+      this.$router.push({ name: 'Search' })
     },
     gotoSettings() {
       this.$router.push({ name: 'Settings' })
