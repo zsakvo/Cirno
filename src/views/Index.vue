@@ -6,6 +6,9 @@
         <div class="decoration"></div>
       </div>
       <div class="options">
+        <div class="change-shelf option-icon" @click="changeDeleteMode">
+          <i class="ri-delete-bin-line"></i>
+        </div>
         <div class="change-shelf option-icon" @click="openShelfModal">
           <i class="ri-loader-4-line"></i>
         </div>
@@ -24,9 +27,10 @@
     <a-spin size="large" v-if="loadStatus === 0" />
     <div class="books-wrapper" v-else-if="loadStatus === 1">
       <div class="books">
-        <div class="book" v-for="book in book_list" :key="book.id" @click="gotoBook(book)">
-          <img class="book-cover" :src="book.book_info.cover" />
+        <div class="book" v-for="book in book_list" :key="book.id">
+          <img class="book-cover" :src="book.book_info.cover" @click="gotoBook(book)" />
           <div class="book-name">{{ book.book_info.book_name }}</div>
+          <a-button type="danger" v-show="deleteMode" @click="deleteBook(book)">从书架中删除</a-button>
         </div>
       </div>
     </div>
@@ -71,6 +75,7 @@ export default {
       avatar: this.$store.state.reader_info.avatar_thumb_url,
       checkIn: false,
       shelfModal: false,
+      deleteMode: false,
       loadStatus: 0,
       errText: ''
     }
@@ -89,6 +94,24 @@ export default {
   mounted() {},
   computed: {},
   methods: {
+    changeDeleteMode(){
+      this.deleteMode = !this.deleteMode
+    },
+    deleteBook(book){
+      this.$get({
+        url: '/bookshelf/delete_shelf_book',
+        urlParas: {
+          shelf_id: this.currentShelfId,
+          book_id: book.book_info.book_id
+        }
+      }).then(
+        res => {
+          this.$message.info(book.book_info.book_name+' 已从书架 '+this.currentShelfId+' 中删除')
+          this.refreshBooks()
+        },
+        err => {}
+      )
+    },
     async refreshBooks() {
       this.isCheckIn()
       let shelves = await this.getShelves()
