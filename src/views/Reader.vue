@@ -450,7 +450,7 @@ export default {
     },
     async buyChapter() {
       let buy_result = await this.$get({
-        url: '/chapter_buy',
+        url: '/chapter/buy',
         urlParas: {
           chapter_id: this.cid
         }
