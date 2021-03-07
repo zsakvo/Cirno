@@ -15,7 +15,7 @@
         <div class="change-shelf option-icon" @click="beginCheckIn(checkIn)">
           <i :class="{ 'ri-calendar-check-line': checkIn, 'ri-calendar-line': !checkIn }"></i>
         </div>
-        <div class="change-shelf option-icon" @click="gotoSearch">
+        <div class="change-shelf option-icon" @click="openSearchModal">
           <i class="ri-search-2-line"></i>
         </div>
         <div class="change-shelf option-icon" @click="gotoSettings">
@@ -61,11 +61,14 @@
         </div>
       </div>
     </a-modal>
+    <search ref="search" :currentShelfId="currentShelfId" @refresh="refreshBooksPure" />
   </div>
 </template>
 
 <script>
+import Search from '../components/search.vue'
 export default {
+  components: { Search },
   name: 'Shelf',
   data() {
     return {
@@ -94,10 +97,10 @@ export default {
   mounted() {},
   computed: {},
   methods: {
-    changeDeleteMode(){
+    changeDeleteMode() {
       this.deleteMode = !this.deleteMode
     },
-    deleteBook(book){
+    deleteBook(book) {
       this.$get({
         url: '/bookshelf/delete_shelf_book',
         urlParas: {
@@ -106,8 +109,8 @@ export default {
         }
       }).then(
         res => {
-          this.$message.info(book.book_info.book_name+' 已从书架 '+this.currentShelfId+' 中删除')
-          this.refreshBooks()
+          this.$message.info(book.book_info.book_name + ' 已从书架 ' + this.currentShelfId + ' 中删除')
+          this.getBooks()
         },
         err => {}
       )
@@ -122,6 +125,9 @@ export default {
         this.currentShelfId === null ? (this.currentShelfId = this.shelves[0]['shelf_id']) : null
         this.getBooks()
       }
+    },
+    refreshBooksPure() {
+      this.getBooks()
     },
     refreshPage() {
       this.loadStatus = 0
@@ -179,6 +185,9 @@ export default {
     openShelfModal() {
       this.shelfModal = true
     },
+    openSearchModal() {
+      this.$refs.search.showSearch()
+    },
     changeShelf(id) {
       this.shelfModal = false
       if (id === this.currentShelfId) {
@@ -235,9 +244,6 @@ export default {
           cid: book.last_read_chapter_id
         }
       })
-    },
-    gotoSearch() {
-      this.$router.push({ name: 'Search' })
     },
     gotoSettings() {
       this.$router.push({ name: 'Settings' })
